@@ -1,0 +1,28 @@
+name: Validate Pull Request
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 'Build and Deploy'
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          mkdir sfdx-cli
+          tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
+          ./sfdx-cli/install
+      - name: 'Decrypt File'
+        run: openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
+      - name: 'Authorize'
+        run: |
+          echo username value ${{ secrets.USERNAME }}
+          sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --setdefaultusername --setalias=validate-org
+      - name: 'Convert Metadata'
+        run: sfdx force:source:convert --rootdir=force-app --outputdir=src
+      - name: 'Run Test on Metadata'
+        run: sfdx force:mdapi:deploy --deploydir=src --testlevel=RunLocalTests --checkonly -u validate-org
