@@ -1,5 +1,4 @@
-name: Validate Pull Request
-
+name: Deploy to Production
 on:
   push:
     branches: [ master ]
@@ -22,11 +21,7 @@ jobs:
         run: |
           echo username value ${{ secrets.USERNAME }}
           sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.INSTANCE_URL }} --setdefaultusername --setalias=validate-org
-      - name: 'PWD'
-        run: pwd
-      - name: 'LS'
-        run: ls -al
       - name: 'Convert DX to Metadata'
         run: sfdx force:source:convert --rootdir=force-app --outputdir=src
       - name: 'Validate to Org'
-        run: sfdx force:mdapi:deploy --deploydir=src --testlevel=RunLocalTests --checkonly -u validate-org
+        run: sfdx force:mdapi:deploy --deploydir=src --testlevel=RunLocalTests -u validate-org
