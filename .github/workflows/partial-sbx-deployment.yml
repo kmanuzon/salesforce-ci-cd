@@ -1,27 +1,33 @@
-name: Deploy to Production
+name: Partial SBX Deployment
+
 on:
-  push:
-    branches: [ develop, staging, master ]
+  pull_request:
+    branches: develop
 
 jobs:
-  build:
+  concurrency: partial-sbx
+  validate-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: 'Install SFDX CLI'
+      - name: Install SFDX CLI
         run: |
           wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
           mkdir sfdx-cli
           tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
           ./sfdx-cli/install
-      - name: 'Decrypt Server Key'
+
+      - name: Decrypt Server Key
         run: openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
-      - name: 'Authorize User'
+
+      - name: Authorize User in Org
         run: |
           echo username value ${{ secrets.USERNAME }}
           sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.INSTANCE_URL }} --setdefaultusername --setalias=validate-org
+
       - name: 'Convert DX to Metadata'
         run: sfdx force:source:convert --rootdir=force-app --outputdir=src
-      - name: 'Validate to Org'
-        run: sfdx force:mdapi:deploy --deploydir=src --testlevel=RunLocalTests -u validate-org
+
+      - name: 'Deploy in Org'
+        run: sfdx force:mdapi:deploy --deploydir=src --testlevel=RunLocalTests -u validate-org -w 60
