@@ -24,10 +24,10 @@ jobs:
       - name: 'Authorize User in Org'
         run: |
           echo username value ${{ secrets.USERNAME }}
-          sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.INSTANCE_URL }} --setdefaultusername --setalias=validate-org
+          sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.INSTANCE_URL }} --setdefaultusername --setalias=target-org
 
       - name: 'Convert DX to Metadata'
         run: sfdx force:source:convert --rootdir=force-app --outputdir=src
 
       - name: 'Deploy in Org'
-        run: sfdx force:mdapi:deploy --deploydir=src --testlevel=RunLocalTests -u validate-org -w 60
+        run: sfdx force:mdapi:deploy --wait=-1 --targetusername=target-org --deploydir=src --testlevel=RunLocalTests
