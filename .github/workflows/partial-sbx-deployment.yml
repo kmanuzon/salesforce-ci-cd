@@ -1,7 +1,7 @@
 name: Partial SBX Deployment
 
 on:
-  pull_request:
+  push:
     branches: develop
 
 jobs:
