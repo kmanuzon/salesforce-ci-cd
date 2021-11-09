@@ -24,6 +24,9 @@ jobs:
           tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
           ./sfdx-cli/install
 
+      - name: 'Version'
+        run: sfdx --version
+
       - name: 'Install SFDX-Git-Delta Plugin'
         run: echo "y" | sfdx plugins:install --verbose sfdx-git-delta
 
