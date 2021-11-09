@@ -25,9 +25,7 @@ jobs:
           ./sfdx-cli/install
 
       - name: 'Install SFDX-Git-Delta Plugin'
-        run: |
-          sfdx plugins:install --verbose sfdx-git-delta
-          echo "y"
+        run: echo "y" | sfdx plugins:install --verbose sfdx-git-delta
 
       - name: 'Decrypt Server Key'
         run: openssl enc -nosalt -aes-256-cbc -d -in build/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
