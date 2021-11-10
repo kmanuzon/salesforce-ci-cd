@@ -14,6 +14,7 @@ jobs:
 
       - name: 'State Check'
         run: |
+          echo
           echo === GIT STATUS
           git status --verbose --branch --long
           echo
