@@ -8,6 +8,7 @@ on:
 jobs:
   deploy-build:
     runs-on: ubuntu-latest
+    environment: PARTIAL_SBX
     steps:
       - uses: actions/checkout@v2
 
@@ -23,7 +24,7 @@ jobs:
 
       - name: 'Authorize User in Org'
         run: |
-          sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.INSTANCE_URL }} --setdefaultusername --setalias=target-org
+          sfdx force:auth:jwt:grant --clientid=${{ secrets.ORG_CONSUMER_KEY }} --username=${{ secrets.ORG_USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.ORG_INSTANCE_URL }} --setdefaultusername --setalias=target-org
           sfdx force:org:list --all --verbose
 
       - name: 'Convert DX to Metadata'
