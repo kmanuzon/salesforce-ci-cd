@@ -1,4 +1,4 @@
-name: Production Pull Request Validation
+name: Production PR Validation
 concurrency: 'production'
 
 on:

@@ -1,4 +1,4 @@
-name: Partial SBX Pull Request Validation
+name: Partial SBX PR Validation
 concurrency: 'partial-sbx'
 
 on:
