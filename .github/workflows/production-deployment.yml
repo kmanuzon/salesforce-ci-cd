@@ -2,7 +2,12 @@ name: Production Deployment
 concurrency: 'production'
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Release Description'
+        default: 'Manual Release'
+        required: true
 
 jobs:
   deploy-build:
