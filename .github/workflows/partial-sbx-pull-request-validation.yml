@@ -12,6 +12,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: 'State Check'
+        run: |
+          git status --verbose --branch --long
+          git branch -vv --all
+          echo github.ref is: ${{ github.ref }}
+          echo
+          echo github.event_name is: ${{ github.event_name }}
+          echo
+          echo This workflow is running: ${{ github.workflow }}
+          echo
+          echo The actor is: ${{ github.actor }}
+          echo
+          echo the repo: ${{ github.repository }}
+          echo
+          echo event name: ${{ github.event_name }} GITHUB_EVENT_NAME
+          echo
+          echo the sha is: ${{ github.sha }}
+          echo the ref is: ${{ github.ref }}
+          echo the ref name is: ${{ github.ref_name }}
+          echo the ref type is (branch or tag): ${{ github.ref_type }}
+          echo the head branch is (from): ${{ github.head_ref }}
+          echo the base branch is (mergin to): ${{ github.base_ref }}
+          echo the runner name is: ${{ RUNNER_NAME }}
+
       - name: 'Install SFDX CLI'
         run: |
           wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
