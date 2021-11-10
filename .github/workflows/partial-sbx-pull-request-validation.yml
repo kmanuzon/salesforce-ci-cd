@@ -22,9 +22,6 @@ jobs:
       - name: 'Decrypt Server Key'
         run: openssl enc -nosalt -aes-256-cbc -d -in build/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
 
-      - name: 'Org List Before'
-        run: sfdx force:org:list --all --verbose
-
       - name: 'Authorize User in Org'
         run: sfdx force:auth:jwt:grant --clientid=${{ secrets.ORG_CONSUMER_KEY }} --username=${{ secrets.ORG_USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.ORG_INSTANCE_URL }} --setdefaultusername --setalias=target-org
 

@@ -6,6 +6,8 @@ different environments and branches.
 
 ## Statuses
 
+[![Partial SBX Pull Request Validation](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-pull-request-validation.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-pull-request-validation.yml)
+
 [![Partial SBX Deployment](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deployment.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deployment.yml)
 
 [![Production Deployment](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml)
