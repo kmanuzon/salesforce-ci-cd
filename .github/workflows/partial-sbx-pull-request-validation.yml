@@ -14,31 +14,44 @@ jobs:
 
       - name: 'State Check'
         run: |
+          echo === GIT STATUS
           git status --verbose --branch --long
+          echo
+          echo === GIT BRANCH
           git branch -vv --all
-          echo github.ref is: ${{ github.ref }}
           echo
-          echo github.event_name is: ${{ github.event_name }}
+          echo === GIT LOG
+          git log -5 --source
           echo
-          echo This workflow is running: ${{ github.workflow }}
+          echo === GITHUB_WORKFLOW: The action name
+          echo ${{ github.workflow }}
           echo
-          echo The actor is: ${{ github.actor }}
+          echo === GITHUB_ACTOR: Ran by username
+          echo ${{ github.actor }}
           echo
-          echo the repo: ${{ github.repository }}
+          echo === GITHUB_REPOSITORY
+          echo ${{ github.repository }}
           echo
-          echo event name: ${{ github.event_name }}
+          echo === GITHUB_EVENT_NAME
+          echo  ${{ github.event_name }}
           echo
-          echo the sha is: ${{ github.sha }}
+          echo === GITHUB_SHA
+          echo ${{ github.sha }}
           echo
-          echo the ref is: ${{ github.ref }}
+          echo === GITHUB_REF
+          echo ${{ github.ref }}
           echo
-          echo the ref name is: ${{ github.ref_name }}
+          echo === GITHUB_REF_NAME
+          echo ${{ github.ref_name }}
           echo
-          echo the ref type is branch or tag: ${{ github.ref_type }}
+          echo === GITHUB_REF_TYPE: branch or tag
+          echo ${{ github.ref_type }}
           echo
-          echo the head branch is from: ${{ github.head_ref }}
+          echo === GITHUB_HEAD_REF: Source of the change
+          echo ${{ github.head_ref }}
           echo
-          echo the base branch is merging to: ${{ github.base_ref }}
+          echo === GITHUB_BASE_REF: Target of the change
+          echo ${{ github.base_ref }}
 
       - name: 'Install SFDX CLI'
         run: |
