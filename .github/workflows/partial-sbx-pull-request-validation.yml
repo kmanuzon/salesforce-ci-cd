@@ -34,7 +34,6 @@ jobs:
           echo the ref type is (branch or tag): ${{ github.ref_type }}
           echo the head branch is (from): ${{ github.head_ref }}
           echo the base branch is (mergin to): ${{ github.base_ref }}
-          echo the runner name is: ${{ RUNNER_NAME }}
 
       - name: 'Install SFDX CLI'
         run: |
