@@ -23,7 +23,7 @@ jobs:
           ./sfdx-cli/install
 
       - name: 'Decrypt Server Key'
-        run: openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
+        run: openssl enc -nosalt -aes-256-cbc -d -in build/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
 
       - name: 'Authorize User in Org'
         run: |
