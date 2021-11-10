@@ -1,0 +1,66 @@
+name: Partial SBX Pull Request Validation
+concurrency: 'partial-sbx'
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Release Description'
+        default: 'Manual Release'
+        required: true
+
+jobs:
+  validate-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 'Print Branch'
+        run: git branch -vv
+
+      - name: 'Print Log'
+        run: git log -5
+
+      - name: 'Install SFDX CLI'
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          mkdir sfdx-cli
+          tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
+          ./sfdx-cli/install
+
+      - name: 'Version'
+        run: sfdx --version
+
+      - name: 'Install SFDX-Git-Delta Plugin'
+        run: echo "y" | sfdx plugins:install --verbose sfdx-git-delta
+
+      - name: 'Decrypt Server Key'
+        run: openssl enc -nosalt -aes-256-cbc -d -in build/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
+
+      - name: 'Authorize User in Org'
+        run: sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.INSTANCE_URL }} --setdefaultusername --setalias=target-org
+
+      - name: 'Generate Delta Diff'
+        run: sfdx sgd:source:delta --generate-delta --output=build/artifact --source=force-app --to=HEAD --from=develop
+
+      - name: 'Change Directory'
+        run: cd build/artifact
+
+      - name: 'LS'
+        run: ls
+
+      - name: 'Validate in Org'
+        run: |
+          echo "--- package.xml generated with added and modified metadata ---"
+          cat package/package.xml
+          echo
+          echo "---- Deploying added and modified metadata ----"
+          sfdx force:source:deploy --checkonly --testlevel=RunLocalTests --targetusername=target-org  --wait=-1 --manifest=package/package.xml
+
+
+
+      - name: 'Convert DX to Metadata'
+        run: sfdx force:source:convert --rootdir=force-app --outputdir=src
+
+      - name: 'Validate in Org'
+        run: sfdx force:mdapi:deploy --wait=-1 --targetusername=target-org --deploydir=src --testlevel=RunLocalTests --checkonly
