@@ -10,6 +10,8 @@ different environments and branches.
 
 [![Partial SBX Deployment](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deployment.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deployment.yml)
 
+[![Production Pull Request Validation](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-pull-request-validation.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-pull-request-validation.yml)
+
 [![Production Deployment](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml)
 
 
