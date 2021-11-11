@@ -10,13 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: PARTIAL_SBX
     steps:
-      - name: 'Validate in Org'
-        run: echo ${{ SFDC_UNIT_TESTS }}
-        env:
-          SFDC_UNIT_TESTS: ${{ tr '\n' ',' < build/unit-tests.txt }}
-#
-#     - uses: actions/checkout@v2
-#
+      - uses: actions/checkout@v2
+
+      - name: 'Parse Unit Test Class Names'
+        run: |
+          echo "SFDC_UNIT_TESTS={ tr '\n' ',' < build/unit-tests.txt }" >> $GITHUB_ENV
+
+      - name: 'Print Unit Test Class Names'
+        run: |
+          echo "${{ env.SFDC_UNIT_TESTS }}"
+
 #     - name: 'State Check'
 #       run: |
 #         echo
