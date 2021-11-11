@@ -12,9 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: 'Test Command'
+        run: tr '\n' ',' < build/unit-tests.txt
+
       - name: 'Parse Unit Test Class Names'
         run: |
-          echo "SFDC_UNIT_TESTS={ tr '\n' ',' < build/unit-tests.txt }" >> $GITHUB_ENV
+          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
 
       - name: 'Print Unit Test Class Names'
         run: |
