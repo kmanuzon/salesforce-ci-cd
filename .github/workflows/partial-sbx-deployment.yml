@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
       - name: 'Install SFDX CLI'
         run: |
@@ -83,7 +83,7 @@ jobs:
         run: sfdx force:org:list --all --verbose
 
       - name: 'Generate Delta Diff'
-        run: sfdx sgd:source:delta --source=force-app --output=build/artifact --to=remotes/origin/${{ github.head_ref }} --from=remotes/origin/${{ github.base_ref }}
+        run: sfdx sgd:source:delta --source=force-app --output=build/artifact --to=HEAD --from=HEAD^
 
       - name: 'Package XML Output'
         run: cat build/artifact/package/package.xml
