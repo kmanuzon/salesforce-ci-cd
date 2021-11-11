@@ -65,5 +65,9 @@ jobs:
       - name: 'Convert DX to Metadata'
         run: sfdx force:source:convert --rootdir=force-app --outputdir=src
 
+      - name: 'Parse and Store Unit Tests to Run'
+        run: |
+          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
+
       - name: 'Validate in Org'
         run: sfdx force:mdapi:deploy --wait=-1 --targetusername=target-org --deploydir=src --testlevel=RunLocalTests --checkonly

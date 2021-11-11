@@ -36,5 +36,9 @@ jobs:
           sfdx force:source:convert --rootdir=force-app --outputdir=src
           cat src/package.xml
 
+      - name: 'Parse and Store Unit Tests to Run'
+        run: |
+          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
+
       - name: 'Deploy in Org'
         run: sfdx force:mdapi:deploy --wait=-1 --targetusername=target-org --deploydir=src --testlevel=RunLocalTests

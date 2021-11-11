@@ -76,5 +76,9 @@ jobs:
       - name: 'Package XML Output'
         run: cat src/package.xml
 
+      - name: 'Parse and Store Unit Tests to Run'
+        run: |
+          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
+
       - name: 'Validate in Org'
         run: sfdx force:mdapi:deploy --wait=-1 --targetusername=target-org --deploydir=src --testlevel=RunLocalTests --checkonly
