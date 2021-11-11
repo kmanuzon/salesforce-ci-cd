@@ -98,7 +98,6 @@ jobs:
 
       - name: 'Parse and Store Unit Tests to Run'
         run: |
-#          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
           echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < ../unit-tests.txt )" >> $GITHUB_ENV
 
       - name: 'Validate in Org'
