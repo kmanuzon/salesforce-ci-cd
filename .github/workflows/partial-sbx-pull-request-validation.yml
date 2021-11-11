@@ -17,10 +17,16 @@ jobs:
           wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
           mkdir sfdx-cli
           tar xJf sfdx-linux-x64.tar.xz -C sfdx-cli --strip-components 1
-          echo "$( pwd )/sfdx-cli" >> $GITHUB_PATH
+          echo "$( pwd )/sfdx-cli/bin" >> $GITHUB_PATH
 
       - name: 'State Check'
         run: |
+          echo
+          echo === PWD
+          echo pwd
+          echo
+          echo === LS
+          echo ls -al sfdx-cli/bin/
           echo
           echo === GIT STATUS
           git status --verbose --branch --long
