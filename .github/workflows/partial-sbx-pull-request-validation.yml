@@ -76,7 +76,7 @@ jobs:
       - name: 'Package XML Output'
         run: cat src/package.xml
 
-      - name: 'Parse Unit Tests to Run'
+      - name: 'Parse and Store Unit Tests to Run'
         run: |
           echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
 
