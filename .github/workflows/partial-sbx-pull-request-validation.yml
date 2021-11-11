@@ -11,6 +11,8 @@ jobs:
     environment: PARTIAL_SBX
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: 'Install SFDX CLI'
         run: |
