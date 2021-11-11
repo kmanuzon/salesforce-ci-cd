@@ -32,9 +32,6 @@ jobs:
           echo === GIT BRANCH
           git branch -vv --all
           echo
-          echo === GIT LOG
-          git log -5 --source
-          echo
           echo === GITHUB_WORKFLOW: The action name
           echo ${{ github.workflow }}
           echo
@@ -85,10 +82,7 @@ jobs:
 
       - name: 'Generate Delta Diff'
         run: sfdx sgd:source:delta --source=force-app --output=build/artifact --to=remotes/origin/${{ github.head_ref }} --from=remotes/origin/${{ github.base_ref }}
-#
-#     - name: 'Convert DX to Metadata'
-#       run: sfdx force:source:convert --rootdir=force-app --outputdir=src
-#
+
       - name: 'Package XML Output'
         run: cat build/artifact/package/package.xml
 
@@ -98,7 +92,3 @@ jobs:
 
       - name: 'Validate in Org'
         run: sfdx force:source:deploy --verbose --wait=120 --manifest=build/artifact/package/package.xml --targetusername=target-org --testlevel=RunSpecifiedTests --runtests=${{ env.SFDC_UNIT_TESTS }} --checkonly
-
-#
-#     - name: 'Validate in Org'
-#       run: sfdx force:mdapi:deploy --verbose --wait=-1 --deploydir=src --targetusername=target-org --testlevel=RunSpecifiedTests --runtests=${{ env.SFDC_UNIT_TESTS }} --checkonly
