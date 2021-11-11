@@ -17,7 +17,7 @@ jobs:
           wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
           mkdir sfdx-cli
           tar xJf sfdx-linux-x64.tar.xz -C sfdx-cli --strip-components 1
-          echo "$( pwd )/sfdx-cli/bin" >> $GITHUB_PAT
+          echo "$( pwd )/sfdx-cli/bin" >> $GITHUB_PATH
 
       - name: 'Install SFDX-Git-Delta Plugin'
         run: echo "y" | sfdx plugins:install --verbose sfdx-git-delta
