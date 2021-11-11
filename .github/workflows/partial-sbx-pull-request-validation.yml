@@ -84,7 +84,7 @@ jobs:
         run: sfdx force:org:list --all --verbose
 
       - name: 'Generate Delta Diff'
-        run: sfdx sgd:source:delta --source=force-app --output=build/artifact --to=HEAD --from=develop
+        run: sfdx sgd:source:delta --source=force-app --output=build/artifact --to=${{ github.head_ref }} --from=${{ github.base_ref }}
 #
 #     - name: 'Convert DX to Metadata'
 #       run: sfdx force:source:convert --rootdir=force-app --outputdir=src
