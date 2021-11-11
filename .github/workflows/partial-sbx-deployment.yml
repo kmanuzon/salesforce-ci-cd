@@ -81,4 +81,4 @@ jobs:
           echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
 
       - name: 'Deploy in Org'
-        run: sfdx force:mdapi:deploy --wait=-1 --targetusername=target-org --deploydir=src --testlevel=RunLocalTests
+        run: sfdx force:mdapi:deploy --verbose --wait=-1 --deploydir=src --targetusername=target-org --testlevel=RunSpecifiedTests --runtests=${{ env.SFDC_UNIT_TESTS }}
