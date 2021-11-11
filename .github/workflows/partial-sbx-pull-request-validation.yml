@@ -20,7 +20,7 @@ jobs:
           echo "$( pwd )/sfdx-cli/bin" >> $GITHUB_PATH
 
       - name: 'Install SFDX-Git-Delta Plugin'
-        run: echo "y" | sfdx plugins:install --verbose sfdx-git-delta
+        run: echo "y" | sfdx plugins:install sfdx-git-delta
 
       - name: 'State Check'
         run: |
