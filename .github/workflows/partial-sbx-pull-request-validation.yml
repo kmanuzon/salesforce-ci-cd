@@ -11,6 +11,9 @@ jobs:
     environment: PARTIAL_SBX
     steps:
       - uses: actions/checkout@v2
+#     - uses: actions/setup-node@v2
+#       with:
+#         node-version: '14'
 
       - name: 'State Check'
         run: |
@@ -53,32 +56,35 @@ jobs:
           echo
           echo === GITHUB_BASE_REF: Target of the change
           echo ${{ github.base_ref }}
-
-      - name: 'Install SFDX CLI'
-        run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-          mkdir sfdx-cli
-          tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
-          ./sfdx-cli/install
-
-      - name: 'Decrypt Server Key'
-        run: openssl enc -nosalt -aes-256-cbc -d -in build/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
-
-      - name: 'Authorize User in Org'
-        run: sfdx force:auth:jwt:grant --clientid=${{ secrets.ORG_CONSUMER_KEY }} --username=${{ secrets.ORG_USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.ORG_INSTANCE_URL }} --setdefaultusername --setalias=target-org
-
-      - name: 'Org List'
-        run: sfdx force:org:list --all --verbose
-
-      - name: 'Convert DX to Metadata'
-        run: sfdx force:source:convert --rootdir=force-app --outputdir=src
-
-      - name: 'Package XML Output'
-        run: cat src/package.xml
-
-      - name: 'Parse and Store Unit Tests to Run'
-        run: |
-          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
-
-      - name: 'Validate in Org'
-        run: sfdx force:mdapi:deploy --verbose --wait=-1 --deploydir=src --targetusername=target-org --testlevel=RunSpecifiedTests --runtests=${{ env.SFDC_UNIT_TESTS }} --checkonly
+          echo
+          echo === NODE VERSION
+          node -v
+#
+#     - name: 'Install SFDX CLI'
+#       run: |
+#         wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+#         mkdir sfdx-cli
+#         tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
+#         ./sfdx-cli/install
+#
+#     - name: 'Decrypt Server Key'
+#       run: openssl enc -nosalt -aes-256-cbc -d -in build/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
+#
+#     - name: 'Authorize User in Org'
+#       run: sfdx force:auth:jwt:grant --clientid=${{ secrets.ORG_CONSUMER_KEY }} --username=${{ secrets.ORG_USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.ORG_INSTANCE_URL }} --setdefaultusername --setalias=target-org
+#
+#     - name: 'Org List'
+#       run: sfdx force:org:list --all --verbose
+#
+#     - name: 'Convert DX to Metadata'
+#       run: sfdx force:source:convert --rootdir=force-app --outputdir=src
+#
+#     - name: 'Package XML Output'
+#       run: cat src/package.xml
+#
+#     - name: 'Parse and Store Unit Tests to Run'
+#       run: |
+#         echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
+#
+#     - name: 'Validate in Org'
+#       run: sfdx force:mdapi:deploy --verbose --wait=-1 --deploydir=src --targetusername=target-org --testlevel=RunSpecifiedTests --runtests=${{ env.SFDC_UNIT_TESTS }} --checkonly
