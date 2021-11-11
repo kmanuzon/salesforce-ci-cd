@@ -98,10 +98,11 @@ jobs:
 
       - name: 'Parse and Store Unit Tests to Run'
         run: |
-          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
+#          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
+          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < ../unit-tests.txt )" >> $GITHUB_ENV
 
       - name: 'Validate in Org'
-        run: sfdx force:source:deploy --verbose --wait=-1 --manifest=package/package.xml --targetusername=target-org --testlevel=RunSpecifiedTests --runtests=${{ env.SFDC_UNIT_TESTS }} --checkonly
+        run: sfdx force:source:deploy --verbose --wait=120 --manifest=package/package.xml --targetusername=target-org --testlevel=RunSpecifiedTests --runtests=${{ env.SFDC_UNIT_TESTS }} --checkonly
 
 #
 #     - name: 'Validate in Org'
