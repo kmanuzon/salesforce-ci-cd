@@ -1,0 +1,16 @@
+name: 'Decrypt Server Key'
+description: 'Decrypts the encrypted Salesforce Connected App server key.'
+
+inputs:
+  key:
+    description: 'Decryption key.'
+    required: true
+  iv:
+    description: 'Decryption iv.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: openssl enc -nosalt -aes-256-cbc -d -in build/server.key.enc -out server.key -base64 -K ${{ inputs.key }} -iv ${{ inputs.iv }}
