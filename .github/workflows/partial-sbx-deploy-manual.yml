@@ -31,6 +31,10 @@ jobs:
 #          destination-branch: HEAD^
 #          source-branch: HEAD
 
+      - name: 'State Check'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/state-check
+
 #      - name: 'Install SFDX CLI'
 #        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
 #        uses: ./.github/actions/sfdx-cli-install
