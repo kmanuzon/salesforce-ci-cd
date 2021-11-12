@@ -23,11 +23,7 @@ jobs:
 
       - name: 'Install SFDX CLI'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
-        run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-          mkdir sfdx-cli
-          tar xJf sfdx-linux-x64.tar.xz -C sfdx-cli --strip-components 1
-          echo "$( pwd )/sfdx-cli/bin" >> $GITHUB_PATH
+        uses: ./.github/actions/install-sfdx-cli
 
       - name: 'Install SFDX-Git-Delta Plugin'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
