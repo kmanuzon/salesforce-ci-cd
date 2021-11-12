@@ -29,7 +29,7 @@ runs:
         echo
         echo === SALESFORCE CHANGED FILES ONLY NO DELETED FILES
 #         git --no-pager diff --diff-filter=ACMRTUXB --name-only ${{ inputs.destination-branch }} ${{ inputs.source-branch }} | grep ^force-app
-        echo
+#        echo
 
     # make sure the order of arguments is correct in the command, i.e. git diff DESTINATION_BRANCH SOURCE_BRANCH
     # diff-filter excludes deleted files
