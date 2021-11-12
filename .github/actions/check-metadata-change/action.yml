@@ -25,12 +25,20 @@ runs:
         echo "::set-output name=value::$( git --no-pager diff --diff-filter=ACMRTUXB --name-only ${{ inputs.destination-branch }} ${{ inputs.source-branch }} )"
 
     - shell: bash
-      run: echo ${{ steps.diff.outputs.value }}
+      run: echo "${{ steps.diff.outputs.value }}"
+
+    - id: grep
+      shell: bash
+      run: |
+        echo "::set-output name=value::$( steps.diff.outputs.value | grep ^force-app)"
+
+    - shell: bash
+      run: echo "${{ steps.grep.outputs.value }}"
 
     - id: check-metadata-change
       shell: bash
       run: |
-        if [ -n "$(${{ steps.diff.outputs.value }} | grep ^force-app)" ]; then
+        if [ -n "$( steps.grep.outputs.value )" ]; then
           echo "::set-output name=has-metadata-change::true"
           echo
           echo 'Found metadata change. Continue build.'
