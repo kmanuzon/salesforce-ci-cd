@@ -9,6 +9,20 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - shell: bash
+      run: |
+        echo
+        echo === APEX CLASS NAMES
+        cat build/unit-tests.txt
+        echo
+
+    - shell: bash
+      run: |
+        echo
+        echo === COMMA SEPARATED APEX CLASS NAMES
+        tr '\n' ',' < build/unit-tests.txt
+        echo
+
     - id: main
       shell: bash
       run: |
