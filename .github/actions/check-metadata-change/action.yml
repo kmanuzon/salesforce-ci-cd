@@ -21,3 +21,4 @@ runs:
           echo
           echo "::notice title=Validate/Deploy Build Notice::No metadata change found. Skip build."
         fi
+      shell: bash
