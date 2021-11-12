@@ -31,67 +31,26 @@ jobs:
 
       - name: 'State Check'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
-        run: |
-          echo === GIT STATUS
-          git status --verbose --branch --long
-          echo
-          echo === GIT BRANCH
-          git branch -vv --all
-          echo
-          echo === GITHUB_WORKFLOW: The action name
-          echo ${{ github.workflow }}
-          echo
-          echo === GITHUB_ACTOR: Ran by username
-          echo ${{ github.actor }}
-          echo
-          echo === GITHUB_REPOSITORY
-          echo ${{ github.repository }}
-          echo
-          echo === GITHUB_EVENT_NAME
-          echo  ${{ github.event_name }}
-          echo
-          echo === GITHUB_SHA
-          echo ${{ github.sha }}
-          echo
-          echo === GITHUB_REF
-          echo ${{ github.ref }}
-          echo
-          echo === GITHUB_REF_NAME
-          echo ${{ github.ref_name }}
-          echo
-          echo === GITHUB_REF_TYPE: branch or tag
-          echo ${{ github.ref_type }}
-          echo
-          echo === GITHUB_HEAD_REF: Source of the change
-          echo ${{ github.head_ref }}
-          echo
-          echo === GITHUB_BASE_REF: Target of the change
-          echo ${{ github.base_ref }}
-          echo
-          echo === NODE VERSION
-          node -v
-          echo
-          echo === SFDX CLI VERSION
-          sfdx --version
-          echo
-          echo === SFDX PLUGINS
-          sfdx plugins --core
+        uses: ./.github/actions/state-check
 
       - name: 'Decrypt Server Key'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
-        run: openssl enc -nosalt -aes-256-cbc -d -in build/server.key.enc -out server.key -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
+        uses: ./.github/actions/decrypt-server-key
 
       - name: 'Authorize User in Org'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
-        run: sfdx force:auth:jwt:grant --clientid=${{ secrets.ORG_CONSUMER_KEY }} --username=${{ secrets.ORG_USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.ORG_INSTANCE_URL }} --setdefaultusername --setalias=target-org
+        uses: ./.github/actions/sfdx-authorize-user
 
       - name: 'Org List'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
         run: sfdx force:org:list --all --verbose
 
-      - name: 'Generate Delta Diff'
+      - name: 'Generate Git Diff Delta'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
-        run: sfdx sgd:source:delta --source=force-app --output=build/artifact --to=remotes/origin/${{ github.head_ref }} --from=remotes/origin/${{ github.base_ref }}
+        uses: ./.github/actions/sfdx-generate-git-delta
+        with:
+          destination-branch: remotes/origin/${{ github.base_ref }}
+          source-branch: remotes/origin/${{ github.head_ref }}
 
       - name: 'Package XML Output'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
@@ -99,9 +58,11 @@ jobs:
 
       - name: 'Parse and Store Unit Tests to Run'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
-        run: |
-          echo "SFDC_UNIT_TESTS=$( tr '\n' ',' < build/unit-tests.txt )" >> $GITHUB_ENV
+        id: parse-unit-tests
+        uses: ./.github/actions/parse-unit-tests
 
       - name: 'Validate in Org'
         if: steps.check-metadata-change.outputs.has-metadata-change == true
-        run: sfdx force:source:deploy --verbose --wait=120 --manifest=build/artifact/package/package.xml --targetusername=target-org --testlevel=RunSpecifiedTests --runtests=${{ env.SFDC_UNIT_TESTS }} --checkonly
+        uses: ./.github/actions/sfdx-validate-build
+        with:
+          unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}

@@ -1,0 +1,15 @@
+name: 'Parse Unit Tests'
+description: 'Reads the unit tests file and prepares comma separated values.'
+
+outputs:
+  unit-tests:
+    description: 'Comma separated Apex Class names.'
+    value: ${{ steps.main.outputs.value }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: main
+      shell: bash
+      run: |
+        echo "::set-output name=value::$( tr '\n' ',' < build/unit-tests.txt )"
