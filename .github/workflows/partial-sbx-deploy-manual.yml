@@ -77,13 +77,13 @@ jobs:
         uses: ./.github/actions/parse-unit-tests
 
       - name: 'Validate in Org'
-        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && contains(github.event.inputs.commit-hash, 'Yes')
+        if: ${{ (steps.check-metadata-change.outputs.has-metadata-change == 'true') && contains(github.event.inputs.commit-hash, 'Yes') }}
         uses: ./.github/actions/sfdx-validate-build
         with:
           unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}
 
       - name: 'Deploy in Org'
-        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && !contains(github.event.inputs.commit-hash, 'Yes')
+        if: ${{ (steps.check-metadata-change.outputs.has-metadata-change == 'true') && !contains(github.event.inputs.commit-hash, 'Yes') }}
         uses: ./.github/actions/sfdx-deploy-build
         with:
           unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}
