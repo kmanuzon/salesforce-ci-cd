@@ -1,4 +1,4 @@
-name: Partial SBX PR Validation
+name: Partial SBX Validate PR
 concurrency: 'partial-sbx'
 
 on:

@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>FieldTwo__c</fullName>
     <externalId>false</externalId>
-    <label>Karl</label>
+    <label>Field Two</label>
     <length>80</length>
     <required>false</required>
     <trackTrending>false</trackTrending>
