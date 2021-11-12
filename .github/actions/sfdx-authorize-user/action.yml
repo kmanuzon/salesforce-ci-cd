@@ -1,8 +1,19 @@
 name: 'SFDX Authorize User'
 description: 'Authorizes a user in Salesforce.'
 
+inputs:
+  username:
+    description: 'SFDC Username.'
+    required: true
+  client-id:
+    description: 'Connected App Consumer Key.'
+    required: true
+  instance-url:
+    description: 'Login URL of the Org.'
+    required: true
+
 runs:
   using: "composite"
   steps:
     - shell: bash
-      run: sfdx force:auth:jwt:grant --clientid=${{ secrets.ORG_CONSUMER_KEY }} --username=${{ secrets.ORG_USERNAME }} --jwtkeyfile server.key --instanceurl=${{ secrets.ORG_INSTANCE_URL }} --setdefaultusername --setalias=target-org
+      run: sfdx force:auth:jwt:grant --clientid=${{ inputs.client-id }} --username=${{ inputs.username }} --jwtkeyfile server.key --instanceurl=${{ inputs.instance-url }} --setdefaultusername --setalias=target-org
