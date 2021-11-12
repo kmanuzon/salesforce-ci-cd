@@ -22,47 +22,47 @@ jobs:
           source-branch: remotes/origin/${{ github.head_ref }}
 
       - name: 'Install SFDX CLI'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/install-sfdx-cli
 
       - name: 'Install SFDX-Git-Delta Plugin'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         run: echo "y" | sfdx plugins:install sfdx-git-delta
 
       - name: 'State Check'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/state-check
 
       - name: 'Decrypt Server Key'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/decrypt-server-key
 
       - name: 'Authorize User in Org'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/sfdx-authorize-user
 
       - name: 'Org List'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         run: sfdx force:org:list --all --verbose
 
       - name: 'Generate Git Diff Delta'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/sfdx-generate-git-delta
         with:
           destination-branch: remotes/origin/${{ github.base_ref }}
           source-branch: remotes/origin/${{ github.head_ref }}
 
       - name: 'Package XML Output'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         run: cat build/artifact/package/package.xml
 
       - name: 'Parse and Store Unit Tests to Run'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         id: parse-unit-tests
         uses: ./.github/actions/parse-unit-tests
 
       - name: 'Validate in Org'
-        if: steps.check-metadata-change.outputs.has-metadata-change == true
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/sfdx-validate-build
         with:
           unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}

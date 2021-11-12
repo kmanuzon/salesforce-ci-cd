@@ -17,28 +17,18 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - shell: bash
+      run: git --no-pager diff --diff-filter=ACMRTUXB --name-only ${{ inputs.destination-branch }} ${{ inputs.source-branch }}
+
+    - shell: bash
+      run: git --no-pager diff --diff-filter=ACMRTUXB --name-only ${{ inputs.destination-branch }} ${{ inputs.source-branch }} | grep ^force-app
+
     # make sure the order of arguments is correct in the command, i.e. git diff DESTINATION_BRANCH SOURCE_BRANCH
     # diff-filter excludes deleted files
-    - id: diff
-      shell: bash
-      run: |
-        echo "::set-output name=value::$( git --no-pager diff --diff-filter=ACMRTUXB --name-only ${{ inputs.destination-branch }} ${{ inputs.source-branch }} )"
-
-    - shell: bash
-      run: echo "${{ steps.diff.outputs.value }}"
-
-    - id: grep
-      shell: bash
-      run: |
-        echo "::set-output name=value::$( steps.diff.outputs.value | grep ^force-app)"
-
-    - shell: bash
-      run: echo "${{ steps.grep.outputs.value }}"
-
     - id: check-metadata-change
       shell: bash
       run: |
-        if [ -n "$( steps.grep.outputs.value )" ]; then
+        if [ -n "$(git --no-pager diff --diff-filter=ACMRTUXB --name-only ${{ inputs.destination-branch }} ${{ inputs.source-branch }} | grep ^force-app)" ]; then
           echo "::set-output name=has-metadata-change::true"
           echo
           echo 'Found metadata change. Continue build.'
