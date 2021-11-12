@@ -11,7 +11,7 @@ on:
       test-only:
         description: 'Test only?'
         required: true
-        default: '1'
+        default: 'Yes'
 
 jobs:
   deploy-build:
@@ -77,13 +77,13 @@ jobs:
         uses: ./.github/actions/parse-unit-tests
 
       - name: 'Validate in Org'
-        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && github.event.inputs.commit-hash == '1'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && contains(github.event.inputs.commit-hash, 'Yes')
         uses: ./.github/actions/sfdx-validate-build
         with:
           unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}
 
       - name: 'Deploy in Org'
-        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && github.event.inputs.commit-hash != '1'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && !contains(github.event.inputs.commit-hash, 'Yes')
         uses: ./.github/actions/sfdx-deploy-build
         with:
           unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}
