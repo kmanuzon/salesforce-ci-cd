@@ -36,6 +36,9 @@ jobs:
       - name: 'Decrypt Server Key'
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/decrypt-server-key
+        with:
+          key: ${{ secrets.DECRYPTION_KEY }}
+          iv: ${{ secrets.DECRYPTION_IV }}
 
       - name: 'Authorize User in Org'
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
