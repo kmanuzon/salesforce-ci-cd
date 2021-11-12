@@ -6,11 +6,16 @@ different environments and branches.
 
 ## Statuses
 
-[![Partial SBX Pull Request Validation](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-pull-request-validation.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-pull-request-validation.yml)
 
-[![Partial SBX Deployment](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deployment.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deployment.yml)
+##### Pull Request Validation
+
+[![Partial SBX Validate PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-validate-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-validate-pr.yml)
 
 [![Production Pull Request Validation](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-pull-request-validation.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-pull-request-validation.yml)
+
+##### Pull Request Deployment
+
+[![Partial SBX Deploy PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-pr.yml)
 
 [![Production Deployment](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml)
 
