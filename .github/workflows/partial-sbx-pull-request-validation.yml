@@ -14,15 +14,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      # This step will check for Salesforce metadata changes, if there are none
+      # then skip validate/deploy builds.
+      # Make sure the order of arguments is correct in the command, i.e. git diff DESTINATION_BRANCH SOURCE_BRANCH
       - name: 'Check for Metadata Change'
         id: 'check-metadata-change'
         run: |
           if [ -n "$(git --no-pager diff --diff-filter=ACMRTUXB --name-only remotes/origin/${{ github.base_ref }} remotes/origin/${{ github.head_ref }} | grep ^force-app)" ]; then
             echo "::set-output name=has-metadata-change::true"
+            echo "::notice title=Check for Metadata Change::Metadata has changed. Continue to build."
             echo
             echo 'Found metadata change. Continue to build.'
           else
             echo "::set-output name=has-metadata-change::false"
+            echo "::notice title=Check for Metadata Change::No metadata change. Skip build."
             echo
             echo 'No metadata change. Skip build.'
           fi
