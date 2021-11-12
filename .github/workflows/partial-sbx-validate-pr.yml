@@ -23,7 +23,7 @@ jobs:
 
       - name: 'Install SFDX CLI'
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
-        uses: ./.github/actions/install-sfdx-cli
+        uses: ./.github/actions/sfdx-cli-install
 
       - name: 'Install SFDX-Git-Delta Plugin'
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
