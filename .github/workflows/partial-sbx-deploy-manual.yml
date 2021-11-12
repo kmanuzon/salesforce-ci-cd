@@ -32,6 +32,14 @@ jobs:
       - name: 'Install SFDX CLI'
         run: |
           echo ${{ github.event.inputs.commit-hash }}
+          echo ${{ github.event.inputs.test-only }}
           echo ${{ steps.check-metadata-change.outputs.has-metadata-change }}
-          echo ${{ contains(github.event.inputs.commit-hash, 'Yes') }}
-          echo ${{ (steps.check-metadata-change.outputs.has-metadata-change == 'true') && contains(github.event.inputs.commit-hash, 'Yes') }}
+          echo ${{ contains(github.event.inputs.test-only, 'Yes') }}
+          echo 'validate'
+          echo ${{ (steps.check-metadata-change.outputs.has-metadata-change == 'true') && contains(github.event.inputs.test-only, 'Yes') }}
+          echo 'deploy'
+          echo ${{ (steps.check-metadata-change.outputs.has-metadata-change == 'true') && contains(github.event.inputs.test-only, 'Yes') }}
+          echo 'validate'
+          echo ${{ steps.check-metadata-change.outputs.has-metadata-change == 'true' && contains(github.event.inputs.test-only, 'Yes') }}
+          echo 'deploy'
+          echo ${{ steps.check-metadata-change.outputs.has-metadata-change == 'true' && contains(github.event.inputs.test-only, 'Yes') }}
