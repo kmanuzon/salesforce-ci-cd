@@ -14,18 +14,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: ./.github/actions/check-metadata-change
+      - name: 'Check for Metadata Change'
+        id: check-metadata-change
+        uses: ./.github/actions/check-metadata-change
         with:
           destination-branch: remotes/origin/${{ github.base_ref }}
           source-branch: remotes/origin/${{ github.head_ref }}
-        id: check-metadata-change
-
-#      - name: 'Check for Metadata Change'
-#        id: check-metadata-change
-#        uses: ./.github/actions/check-metadata-change
-#        with:
-#          destination-branch: remotes/origin/${{ github.base_ref }}
-#          source-branch: remotes/origin/${{ github.head_ref }}
 
       - name: 'Install SFDX CLI'
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
