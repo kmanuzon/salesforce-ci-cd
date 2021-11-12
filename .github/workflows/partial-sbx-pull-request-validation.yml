@@ -22,14 +22,13 @@ jobs:
         run: |
           if [ -n "$(git --no-pager diff --diff-filter=ACMRTUXB --name-only remotes/origin/${{ github.base_ref }} remotes/origin/${{ github.head_ref }} | grep ^force-app)" ]; then
             echo "::set-output name=has-metadata-change::true"
-            echo "::notice title=Check for Metadata Change::Metadata has changed. Continue to build."
             echo
-            echo 'Found metadata change. Continue to build.'
+            echo 'Found metadata change. Continue build.'
           else
             echo "::set-output name=has-metadata-change::false"
-            echo "::notice title=Check for Metadata Change::No metadata change. Skip build."
+            echo "::notice title=Validate/Deploy Build Notice::No metadata change found. Skip build."
             echo
-            echo 'No metadata change. Skip build.'
+            echo 'No metadata change found. Skip build.'
           fi
 
       - name: 'Install SFDX CLI'
