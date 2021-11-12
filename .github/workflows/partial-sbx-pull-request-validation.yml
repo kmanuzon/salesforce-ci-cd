@@ -14,8 +14,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 'Check for Metadata Change'
-        id: check-metadata-change
+      - id: check-metadata-change
         uses: ./.github/actions/check-metadata-change
 
       # This step will check for Salesforce metadata changes, if there are none
