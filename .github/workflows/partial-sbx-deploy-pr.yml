@@ -1,4 +1,4 @@
-name: Partial SBX Deployment
+name: Partial SBX Deploy PR
 concurrency: 'partial-sbx'
 
 on:
@@ -15,6 +15,83 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
+
+      - name: 'Check for Metadata Change'
+        id: check-metadata-change
+        uses: ./.github/actions/check-metadata-change
+        with:
+          destination-branch: remotes/origin/${{ github.base_ref }}
+          source-branch: remotes/origin/${{ github.head_ref }}
+
+      - name: 'Install SFDX CLI'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/sfdx-cli-install
+
+      - name: 'Install SFDX-Git-Delta Plugin'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        run: echo "y" | sfdx plugins:install sfdx-git-delta
+
+      - name: 'State Check'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/state-check
+
+      - name: 'Decrypt Server Key'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/decrypt-server-key
+        with:
+          key: ${{ secrets.DECRYPTION_KEY }}
+          iv: ${{ secrets.DECRYPTION_IV }}
+
+      - name: 'Authorize User in Org'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/sfdx-authorize-user
+        with:
+          username: ${{ secrets.ORG_USERNAME }}
+          client-id: ${{ secrets.ORG_CONSUMER_KEY }}
+          instance-url: ${{ secrets.ORG_INSTANCE_URL }}
+
+      - name: 'Org List'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        run: sfdx force:org:list --all --verbose
+
+      - name: 'Generate Git Diff Delta'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/sfdx-generate-git-delta
+        with:
+          destination-branch: HEAD^
+          source-branch: HEAD
+
+
+
+      - name: 'Generate Delta Diff'
+        run: sfdx sgd:source:delta --source=force-app --output=build/artifact --to=HEAD --from=HEAD^
+
+
+
+
+
+      - name: 'Package XML Output'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        run: cat build/artifact/package/package.xml
+
+      - name: 'Parse and Store Unit Tests to Run'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        id: parse-unit-tests
+        uses: ./.github/actions/parse-unit-tests
+
+      - name: 'Validate in Org'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/sfdx-validate-build
+        with:
+          unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}
+
+
+
+
+
+
+
+
 
       - name: 'Install SFDX CLI'
         run: |

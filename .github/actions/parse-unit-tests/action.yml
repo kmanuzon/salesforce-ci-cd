@@ -15,12 +15,14 @@ runs:
         echo === APEX CLASS NAMES
         cat build/unit-tests.txt
         echo
+        echo
 
     - shell: bash
       run: |
         echo
         echo === COMMA SEPARATED APEX CLASS NAMES
         tr '\n' ',' < build/unit-tests.txt
+        echo
         echo
 
     - id: main
