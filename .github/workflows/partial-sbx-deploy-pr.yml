@@ -7,7 +7,7 @@ on:
     types: [ closed ]
 
 jobs:
-  deploy-build:
+  partial-sbx-deploy-build:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: PARTIAL_SBX
