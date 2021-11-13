@@ -1,10 +1,9 @@
 # Salesforce CI/CD with GitHub Actions
 
-This repository is a sample Salesforce CI/CD with GitHub Actions featuring
-different environments and branches.
+This repository is a proof of concept for Salesforce CI/CD with GitHub Actions.
 
 
-## Statuses
+## Status
 
 
 ##### Partial SBX Builds
@@ -29,11 +28,11 @@ different environments and branches.
 
 The following sections will walkthrough step by step of setting up CI/CD.
 
-- Generate server certificates and keys
-- Create Connected App in Salesforce
-- Encrypt server keys and commit to repository
-- Create environment secrets in GitHub
-- Create GitHub Actions for Pull Request and Push events
+- [Generate server certificates and keys](#-generate-server-certificates-and-keys)
+- [Create Connected App in Salesforce](#-create-connected-app-in-salesforce)
+- [Encrypt server keys and commit to repository](#-encrypt-server-keys-and-commit-to-repository)
+- [Setup Environments and Secrets in GitHub](#-setup-environments-and-secrets-in-github)
+- [Create GitHub Actions](#-create-github-actions)
 
 
 ## Generate server certificates and keys
@@ -112,17 +111,71 @@ Make sure the __server.key.enc__ is in __./build__ directory, then commit this
 file to the repository.
 
 
-## Create environment secrets in GitHub
-
-TODO
+## Setup Environments and Secrets in GitHub
 
 
-## Create GitHub Actions for Pull Request and Push events
+### Secrets
 
-TODO
+1. Click __Settings__ tab
+2. Click __Secrets__ vertical tab
+3. Click __New repository secret__ button
+4. Refer to the __Figure 1__ table for field values
+5. Click __Add secret__ button
+6. Repeat steps 3 to 5 for each row
+
+
+###### Figure 1
+
+| Name              | Value                                 |
+| ----------------- | ------------------------------------- |
+| DECRYPTION_IV     | The iv generated in previous section  |
+| DECRYPTION_KEY    | The key generated in previous section |
+| SFDC_INSTANCE_URL | https://test.salesforce.com           |
+
+
+### Environment
+
+1. Click the __Environments__ vertical tab
+2. Click __New environment__ button
+3. Refer to the __Figure 2__ table for field values
+4. Click __Configure environment__ button
+6. Repeat steps 2 to 4 for each row
+
+
+###### Figure 2
+
+| Name        |
+| ----------- |
+| PARTIAL_SBX |
+| PRODUCTION  |
+
+
+### Environment Secrets
+
+1. Click the __Environments__ vertical tab
+2. Click the environment name
+3. Under Environment secrets section, click __Add secret__ button
+4. Refer to the __Figure 3__ table for field values
+5. Repeat steps 2 to 4 for each row
+
+
+###### Figure 3
+
+| Name              | Value                                 |
+| ----------------- | ------------------------------------- |
+| SFDC_CONSUMER_KEY | Salesforce Connected App Consumer Key |
+| SFDC_USERNAME     | Salesforce Username                   |
+
+
+## Create GitHub Actions
+
+This repository already includes actions and workflows. See `./github/`
+directory.
 
 
 ## Resources
+
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
 - [Create a Private Key and Self-Signed Digital Certificate](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm)
 
