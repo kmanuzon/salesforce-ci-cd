@@ -6,7 +6,7 @@ on:
     branches: develop
 
 jobs:
-  validate-build:
+  partial-sbx-validate-build:
     runs-on: ubuntu-latest
     environment: PARTIAL_SBX
     steps:
