@@ -59,7 +59,7 @@ safe place.
 > __NOTE__ The `-k` option is the password value.
 
 ```
-openssl enc -aes-256-cbc -k 12345 -P -md sha1 -nosalt
+openssl enc -aes-256-cbc -k PASSWORD_VALUE -P -md sha1 -nosalt
 ```
 
 
@@ -136,11 +136,11 @@ repository.
 
 ###### Figure 3
 
-| Name              | Value                                 |
-| ----------------- | ------------------------------------- |
-| DECRYPTION_IV     | The iv generated in previous section  |
-| DECRYPTION_KEY    | The key generated in previous section |
-| SFDC_INSTANCE_URL | https://test.salesforce.com           |
+| Name              | Value                                     |
+| ----------------- | ----------------------------------------- |
+| DECRYPTION_IV     | The __iv__ generated in previous section  |
+| DECRYPTION_KEY    | The __key__ generated in previous section |
+| SFDC_INSTANCE_URL | https://test.salesforce.com               |
 
 
 ### Environment
@@ -149,7 +149,7 @@ repository.
 2. Click __New environment__ button
 3. Refer to the __Figure 4__ table for field values
 4. Click __Configure environment__ button
-6. Repeat steps 2 to 4 for each row
+5. Repeat steps 1 to 4 for each row
 
 
 ###### Figure 4
@@ -163,10 +163,10 @@ repository.
 ### Environment Secrets
 
 1. Click the __Environments__ vertical tab
-2. Click the environment name
+2. Click the environment name link
 3. Under Environment secrets section, click __Add secret__ button
 4. Refer to the __Figure 5__ table for field values
-5. Repeat steps 2 to 4 for each row
+5. Repeat steps 3 to 4 for each row
 
 
 ###### Figure 5
@@ -179,8 +179,9 @@ repository.
 
 ## Create GitHub Actions
 
-This repository already includes actions and workflows. See `./github/`
-directory.
+This repository already includes actions and workflows, see `./github/`
+directory. Alternatively, see the [Using environments for deployment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment)
+documentation.
 
 
 ## Resources
