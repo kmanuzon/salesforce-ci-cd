@@ -6,7 +6,7 @@ on:
     branches: master
 
 jobs:
-  validate-build:
+  production-validate-build:
     runs-on: ubuntu-latest
     environment: PRODUCTION
     steps:
