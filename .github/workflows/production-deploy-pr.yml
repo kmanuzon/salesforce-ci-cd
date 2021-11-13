@@ -1,16 +1,16 @@
-name: Partial SBX Deploy PR
-concurrency: 'partial-sbx'
+name: Production Deploy PR
+concurrency: 'production'
 
 on:
   pull_request:
-    branches: develop
+    branches: master
     types: [ closed ]
 
 jobs:
   deploy-build:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    environment: PARTIAL_SBX
+    environment: PRODUCTION
     steps:
       - uses: actions/checkout@v2
         with:

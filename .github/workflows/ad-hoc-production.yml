@@ -1,26 +1,32 @@
-name: Partial SBX Deploy PR
-concurrency: 'partial-sbx'
+name: Ad hoc Production
+concurrency: 'production'
 
 on:
-  pull_request:
-    branches: develop
-    types: [ closed ]
+  workflow_dispatch:
+    inputs:
+      commit-hash:
+        description: 'Commit hash from branch'
+        required: true
+        default: 'HEAD^'
+      test-only:
+        description: 'Test only?'
+        required: true
+        default: 'Yes'
 
 jobs:
-  deploy-build:
-    if: github.event.pull_request.merged == true
+  ad-hoc-build:
     runs-on: ubuntu-latest
-    environment: PARTIAL_SBX
+    environment: PRODUCTION
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: 'Check for Metadata Change'
         id: check-metadata-change
         uses: ./.github/actions/check-metadata-change
         with:
-          destination-branch: HEAD^
+          destination-branch: ${{ github.event.inputs.commit-hash }}
           source-branch: HEAD
 
       - name: 'Install SFDX CLI'
@@ -58,7 +64,7 @@ jobs:
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/sfdx-generate-git-delta
         with:
-          destination-branch: HEAD^
+          destination-branch: ${{ github.event.inputs.commit-hash }}
           source-branch: HEAD
 
       - name: 'Package XML Output'
@@ -70,8 +76,14 @@ jobs:
         id: parse-unit-tests
         uses: ./.github/actions/parse-unit-tests
 
+      - name: 'Validate in Org'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && contains(github.event.inputs.test-only, 'Yes')
+        uses: ./.github/actions/sfdx-validate-build
+        with:
+          unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}
+
       - name: 'Deploy in Org'
-        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && !contains(github.event.inputs.test-only, 'Yes')
         uses: ./.github/actions/sfdx-deploy-build
         with:
           unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}

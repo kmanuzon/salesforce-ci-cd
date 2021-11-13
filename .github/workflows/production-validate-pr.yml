@@ -1,22 +1,14 @@
-name: Partial SBX Deploy Manual
-concurrency: 'partial-sbx'
+name: Production Validate PR
+concurrency: 'production'
 
 on:
-  workflow_dispatch:
-    inputs:
-      commit-hash:
-        description: 'Commit hash from branch'
-        required: true
-        default: 'HEAD^'
-      test-only:
-        description: 'Test only?'
-        required: true
-        default: 'Yes'
+  pull_request:
+    branches: master
 
 jobs:
-  deploy-build:
+  validate-build:
     runs-on: ubuntu-latest
-    environment: PARTIAL_SBX
+    environment: PRODUCTION
     steps:
       - uses: actions/checkout@v2
         with:
@@ -26,8 +18,8 @@ jobs:
         id: check-metadata-change
         uses: ./.github/actions/check-metadata-change
         with:
-          destination-branch: ${{ github.event.inputs.commit-hash }}
-          source-branch: HEAD
+          destination-branch: remotes/origin/${{ github.base_ref }}
+          source-branch: remotes/origin/${{ github.head_ref }}
 
       - name: 'Install SFDX CLI'
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
@@ -52,9 +44,9 @@ jobs:
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/sfdx-authorize-user
         with:
-          username: ${{ secrets.ORG_USERNAME }}
-          client-id: ${{ secrets.ORG_CONSUMER_KEY }}
-          instance-url: ${{ secrets.ORG_INSTANCE_URL }}
+          username: ${{ secrets.SFDC_USERNAME }}
+          client-id: ${{ secrets.SFDC_CONSUMER_KEY }}
+          instance-url: ${{ secrets.SFDC_INSTANCE_URL }}
 
       - name: 'Org List'
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
@@ -64,8 +56,8 @@ jobs:
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/sfdx-generate-git-delta
         with:
-          destination-branch: ${{ github.event.inputs.commit-hash }}
-          source-branch: HEAD
+          destination-branch: remotes/origin/${{ github.base_ref }}
+          source-branch: remotes/origin/${{ github.head_ref }}
 
       - name: 'Package XML Output'
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
@@ -77,13 +69,7 @@ jobs:
         uses: ./.github/actions/parse-unit-tests
 
       - name: 'Validate in Org'
-        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && contains(github.event.inputs.test-only, 'Yes')
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/sfdx-validate-build
-        with:
-          unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}
-
-      - name: 'Deploy in Org'
-        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && !contains(github.event.inputs.test-only, 'Yes')
-        uses: ./.github/actions/sfdx-deploy-build
         with:
           unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}
