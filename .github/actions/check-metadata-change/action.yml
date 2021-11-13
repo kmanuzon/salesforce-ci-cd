@@ -1,0 +1,40 @@
+name: 'Check Metadata Change'
+description: 'Determines if there are Salesforce metadata changes.'
+
+inputs:
+  destination-branch:
+    description: 'The base_ref, also master, release, or develop branch.'
+    required: true
+  source-branch:
+    description: 'The head_ref, also feature, or hotfix branch.'
+    required: true
+
+outputs:
+  has-metadata-change:
+    description: 'Value is true if there are Salesforce metadata changes.'
+    value: ${{ steps.check-metadata-change.outputs.has-metadata-change }}
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        echo
+        echo === SHOWING CHANGED FILES ONLY NO DELETED FILES
+        git --no-pager diff --diff-filter=ACMRTUXB --name-only ${{ inputs.destination-branch }} ${{ inputs.source-branch }}
+        echo
+
+    # make sure the order of arguments is correct in the command, i.e. git diff DESTINATION_BRANCH SOURCE_BRANCH
+    # diff-filter excludes deleted files
+    - id: check-metadata-change
+      shell: bash
+      run: |
+        if [ -n "$(git --no-pager diff --diff-filter=ACMRTUXB --name-only ${{ inputs.destination-branch }} ${{ inputs.source-branch }} | grep ^force-app)" ]; then
+          echo "::set-output name=has-metadata-change::true"
+          echo
+          echo 'Found metadata change. Continue build.'
+        else
+          echo "::set-output name=has-metadata-change::false"
+          echo
+          echo "::notice title=Validate/Deploy Build Notice::No metadata change found. Skip build."
+        fi

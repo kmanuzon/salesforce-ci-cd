@@ -1,0 +1,89 @@
+name: Ad hoc Partial SBX
+concurrency: 'partial-sbx'
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit-hash:
+        description: 'Commit hash from branch'
+        required: true
+        default: 'HEAD^'
+      test-only:
+        description: 'Test only?'
+        required: true
+        default: 'Yes'
+
+jobs:
+  ad-hoc-build:
+    runs-on: ubuntu-latest
+    environment: PARTIAL_SBX
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: 'Check for Metadata Change'
+        id: check-metadata-change
+        uses: ./.github/actions/check-metadata-change
+        with:
+          destination-branch: ${{ github.event.inputs.commit-hash }}
+          source-branch: HEAD
+
+      - name: 'Install SFDX CLI'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/sfdx-cli-install
+
+      - name: 'Install SFDX-Git-Delta Plugin'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        run: echo "y" | sfdx plugins:install sfdx-git-delta
+
+      - name: 'State Check'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/state-check
+
+      - name: 'Decrypt Server Key'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/decrypt-server-key
+        with:
+          key: ${{ secrets.DECRYPTION_KEY }}
+          iv: ${{ secrets.DECRYPTION_IV }}
+
+      - name: 'Authorize User in Org'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/sfdx-authorize-user
+        with:
+          username: ${{ secrets.SFDC_USERNAME }}
+          client-id: ${{ secrets.SFDC_CONSUMER_KEY }}
+          instance-url: ${{ secrets.SFDC_INSTANCE_URL }}
+
+      - name: 'Org List'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        run: sfdx force:org:list --all --verbose
+
+      - name: 'Generate Git Diff Delta'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        uses: ./.github/actions/sfdx-generate-git-delta
+        with:
+          destination-branch: ${{ github.event.inputs.commit-hash }}
+          source-branch: HEAD
+
+      - name: 'Package XML Output'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        run: cat build/artifact/package/package.xml
+
+      - name: 'Parse and Store Unit Tests to Run'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
+        id: parse-unit-tests
+        uses: ./.github/actions/parse-unit-tests
+
+      - name: 'Validate in Org'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && contains(github.event.inputs.test-only, 'Yes')
+        uses: ./.github/actions/sfdx-validate-build
+        with:
+          unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}
+
+      - name: 'Deploy in Org'
+        if: steps.check-metadata-change.outputs.has-metadata-change == 'true' && !contains(github.event.inputs.test-only, 'Yes')
+        uses: ./.github/actions/sfdx-deploy-build
+        with:
+          unit-tests: ${{ steps.parse-unit-tests.outputs.unit-tests }}

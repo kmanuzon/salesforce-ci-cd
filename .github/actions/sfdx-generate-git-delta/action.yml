@@ -1,0 +1,17 @@
+name: 'SFDX Generate Git Delta'
+description: 'Determines which files have been changed.'
+
+inputs:
+  destination-branch:
+    description: 'The base_ref, also master, release, or develop branch.'
+    required: true
+  source-branch:
+    description: 'The head_ref, also feature, or hotfix branch.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    # use HEAD git sha for the "to" argument if possible
+    - shell: bash
+      run: sfdx sgd:source:delta --source=force-app --output=build/artifact --to=${{ inputs.source-branch }} --from=${{ inputs.destination-branch }}

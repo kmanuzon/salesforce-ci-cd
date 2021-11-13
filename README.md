@@ -1,40 +1,84 @@
 # Salesforce CI/CD with GitHub Actions
 
-This repository is a sample Salesforce CI/CD with GitHub Actions featuring
-different environments and branches.
+This repository is a proof of concept for Salesforce CI/CD with GitHub Actions.
 
 
-## Statuses
+## Status
 
-[![Partial SBX Pull Request Validation](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-pull-request-validation.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-pull-request-validation.yml)
 
-[![Partial SBX Deployment](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deployment.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deployment.yml)
+##### Partial SBX Builds
 
-[![Production Pull Request Validation](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-pull-request-validation.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-pull-request-validation.yml)
+[![Ad hoc Partial SBX](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/ad-hoc-partial-sbx.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/ad-hoc-partial-sbx.yml)
 
-[![Production Deployment](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml)
+[![Partial SBX Validate PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-validate-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-validate-pr.yml)
+
+[![Partial SBX Deploy PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-pr.yml)
+
+
+##### Production Builds
+
+[![Ad hoc Production](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/ad-hoc-production.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/ad-hoc-production.yml)
+
+[![Production Validate PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-validate-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-validate-pr.yml)
+
+[![Production Deploy PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deploy-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deploy-pr.yml)
 
 
 ## Overview
 
 The following sections will walkthrough step by step of setting up CI/CD.
 
-- Generate server certificates and keys
-- Create Connected App in Salesforce
-- Encrypt server keys and commit to repository
-- Create environment secrets in GitHub
-- Create GitHub Actions for Pull Request and Push events
+- [Generate server certificate and key](#generate-server-certificate-and-key)
+- [Encrypt server key and commit to repository](#encrypt-server-key-and-commit-to-repository)
+- [Create Connected App in Salesforce](#create-connected-app-in-salesforce)
+- [Setup Environments and Secrets in GitHub](#setup-environments-and-secrets-in-github)
+- [Create GitHub Actions](#create-github-actions)
+- [Resources](#resources)
 
 
-## Generate server certificates and keys
+## Generate server certificate and key
 
 Run the command below to generate __server.crt__ and __server.key__ files.
+
 ```
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -sha256
 ```
 
 The __server.crt__ file will be used later in the Connected App, and the
-__server.key__ file will be used to authenticate in the Connected App.
+__server.key__ file will be used to authenticate to the Connected App.
+
+
+## Encrypt server key and commit to repository
+
+
+### Generate key and iv
+
+Run this command then copy and store the returned __key__ and __iv__ values in a
+safe place.
+
+> __NOTE__ The `-k` option is the password value.
+
+```
+openssl enc -aes-256-cbc -k PASSWORD_VALUE -P -md sha1 -nosalt
+```
+
+
+### Encrypt server key
+
+Run this command to encrypt __server.key__ which generates a new file
+__server.key.enc__, an encrypted version.
+
+> __NOTE__ The `-K` and `-iv` options should come from the previous section's
+__key__ and __iv__ output.
+
+```
+openssl enc -nosalt -aes-256-cbc -in server.key -out server.key.enc -base64 -K KEY_VALUE -iv IV_VALUE
+```
+
+### Commit to repository
+
+Place the __server.key.enc__ in `./build` directory, then commit the file to the
+repository.
 
 
 ## Create Connected App in Salesforce
@@ -44,7 +88,7 @@ __server.key__ file will be used to authenticate in the Connected App.
 3. Populate the fields using the __Figure 1__ table below
 4. Click __Save__ button
 5. Click __Continue__ button
-6. Copy the __Consumer Key__ for use later in this guide
+6. Copy and store the __Consumer Key__ temporarily for use later in this guide
 7. Click __Manage__ button
 8. Click __Edit Policies__ button
 9. Populate the fields using the __Figure 2__ table below
@@ -77,42 +121,72 @@ __server.key__ file will be used to authenticate in the Connected App.
 | Permitted Users                    | Admin approved users are pre-authorized |
 
 
-## Encrypt server key and commit to repository
+## Setup Environments and Secrets in GitHub
 
 
-### Generate key and iv
+### Secrets
 
-Run this command and copy the returned __key__ and __iv__ values. Note that
-__-k__ flag is the password.
-```
-openssl enc -aes-256-cbc -k 12345 -P -md sha1 -nosalt
-```
-
-
-### Encrypt server key
-
-Run this command to encrypt __server.key__ to a new file __server.key.enc__.
-```
-openssl enc -nosalt -aes-256-cbc -in server.key -out server.key.enc -base64 -K KEY_VALUE -iv IV_VALUE
-```
-
-### Commit to repository
-
-Make sure the __server.key.enc__ is in __./build__ directory, then commit this
-file to the repository.
+1. Click __Settings__ tab
+2. Click __Secrets__ vertical tab
+3. Click __New repository secret__ button
+4. Refer to the __Figure 3__ table for field values
+5. Click __Add secret__ button
+6. Repeat steps 3 to 5 for each row
 
 
-## Create environment secrets in GitHub
+###### Figure 3
 
-TODO
+| Name              | Value                                     |
+| ----------------- | ----------------------------------------- |
+| DECRYPTION_IV     | The __iv__ generated in previous section  |
+| DECRYPTION_KEY    | The __key__ generated in previous section |
+| SFDC_INSTANCE_URL | https://test.salesforce.com               |
 
 
-## Create GitHub Actions for Pull Request and Push events
+### Environment
 
-TODO
+1. Click the __Environments__ vertical tab
+2. Click __New environment__ button
+3. Refer to the __Figure 4__ table for field values
+4. Click __Configure environment__ button
+5. Repeat steps 1 to 4 for each row
+
+
+###### Figure 4
+
+| Name        |
+| ----------- |
+| PARTIAL_SBX |
+| PRODUCTION  |
+
+
+### Environment Secrets
+
+1. Click the __Environments__ vertical tab
+2. Click the environment name link
+3. Under Environment secrets section, click __Add secret__ button
+4. Refer to the __Figure 5__ table for field values
+5. Repeat steps 3 to 4 for each row
+
+
+###### Figure 5
+
+| Name              | Value                                 |
+| ----------------- | ------------------------------------- |
+| SFDC_CONSUMER_KEY | Salesforce Connected App Consumer Key |
+| SFDC_USERNAME     | Salesforce Username                   |
+
+
+## Create GitHub Actions
+
+This repository already includes actions and workflows, see `./github/`
+directory. Alternatively, see the [Using environments for deployment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment)
+documentation.
 
 
 ## Resources
+
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
 - [Create a Private Key and Self-Signed Digital Certificate](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm)
 
@@ -124,6 +198,7 @@ TODO
 ## Snippets
 
 ### Create Scratch Org
+
 ```
 sfdx force:org:create --wait 30 --durationdays 30 --setdefaultusername \
 --definitionfile config/project-scratch-def.json \
