@@ -1,4 +1,4 @@
-name: Partial SBX Deploy Manual
+name: Ad hoc Partial SBX
 concurrency: 'partial-sbx'
 
 on:
@@ -14,7 +14,7 @@ on:
         default: 'Yes'
 
 jobs:
-  deploy-build:
+  ad-hoc-build:
     runs-on: ubuntu-latest
     environment: PARTIAL_SBX
     steps:
@@ -52,9 +52,9 @@ jobs:
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
         uses: ./.github/actions/sfdx-authorize-user
         with:
-          username: ${{ secrets.ORG_USERNAME }}
-          client-id: ${{ secrets.ORG_CONSUMER_KEY }}
-          instance-url: ${{ secrets.ORG_INSTANCE_URL }}
+          username: ${{ secrets.SFDC_USERNAME }}
+          client-id: ${{ secrets.SFDC_CONSUMER_KEY }}
+          instance-url: ${{ secrets.SFDC_INSTANCE_URL }}
 
       - name: 'Org List'
         if: steps.check-metadata-change.outputs.has-metadata-change == 'true'
