@@ -29,8 +29,8 @@ This repository is a proof of concept for Salesforce CI/CD with GitHub Actions.
 The following sections will walkthrough step by step of setting up CI/CD.
 
 - [Generate server certificate and key](#generate-server-certificate-and-key)
-- [Create Connected App in Salesforce](#create-connected-app-in-salesforce)
 - [Encrypt server key and commit to repository](#encrypt-server-key-and-commit-to-repository)
+- [Create Connected App in Salesforce](#create-connected-app-in-salesforce)
 - [Setup Environments and Secrets in GitHub](#setup-environments-and-secrets-in-github)
 - [Create GitHub Actions](#create-github-actions)
 - [Resources](#resources)
@@ -39,12 +39,46 @@ The following sections will walkthrough step by step of setting up CI/CD.
 ## Generate server certificate and key
 
 Run the command below to generate __server.crt__ and __server.key__ files.
+
 ```
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -sha256
 ```
 
 The __server.crt__ file will be used later in the Connected App, and the
-__server.key__ file will be used to authenticate in the Connected App.
+__server.key__ file will be used to authenticate to the Connected App.
+
+
+## Encrypt server key and commit to repository
+
+
+### Generate key and iv
+
+Run this command then copy and store the returned __key__ and __iv__ values in a
+safe place.
+
+> __NOTE__ The `-k` option is the password value.
+
+```
+openssl enc -aes-256-cbc -k 12345 -P -md sha1 -nosalt
+```
+
+
+### Encrypt server key
+
+Run this command to encrypt __server.key__ which generates a new file
+__server.key.enc__, an encrypted version.
+
+> __NOTE__ The `-K` and `-iv` options should come from the previous section's
+__key__ and __iv__ output.
+
+```
+openssl enc -nosalt -aes-256-cbc -in server.key -out server.key.enc -base64 -K KEY_VALUE -iv IV_VALUE
+```
+
+### Commit to repository
+
+Place the __server.key.enc__ in `./build` directory, then commit the file to the
+repository.
 
 
 ## Create Connected App in Salesforce
@@ -54,7 +88,7 @@ __server.key__ file will be used to authenticate in the Connected App.
 3. Populate the fields using the __Figure 1__ table below
 4. Click __Save__ button
 5. Click __Continue__ button
-6. Copy the __Consumer Key__ for use later in this guide
+6. Copy and store the __Consumer Key__ temporarily for use later in this guide
 7. Click __Manage__ button
 8. Click __Edit Policies__ button
 9. Populate the fields using the __Figure 2__ table below
@@ -87,31 +121,6 @@ __server.key__ file will be used to authenticate in the Connected App.
 | Permitted Users                    | Admin approved users are pre-authorized |
 
 
-## Encrypt server key and commit to repository
-
-
-### Generate key and iv
-
-Run this command and copy the returned __key__ and __iv__ values. Note that
-__-k__ flag is the password.
-```
-openssl enc -aes-256-cbc -k 12345 -P -md sha1 -nosalt
-```
-
-
-### Encrypt server key
-
-Run this command to encrypt __server.key__ to a new file __server.key.enc__.
-```
-openssl enc -nosalt -aes-256-cbc -in server.key -out server.key.enc -base64 -K KEY_VALUE -iv IV_VALUE
-```
-
-### Commit to repository
-
-Make sure the __server.key.enc__ is in __./build__ directory, then commit this
-file to the repository.
-
-
 ## Setup Environments and Secrets in GitHub
 
 
@@ -120,12 +129,12 @@ file to the repository.
 1. Click __Settings__ tab
 2. Click __Secrets__ vertical tab
 3. Click __New repository secret__ button
-4. Refer to the __Figure 1__ table for field values
+4. Refer to the __Figure 3__ table for field values
 5. Click __Add secret__ button
 6. Repeat steps 3 to 5 for each row
 
 
-###### Figure 1
+###### Figure 3
 
 | Name              | Value                                 |
 | ----------------- | ------------------------------------- |
@@ -138,12 +147,12 @@ file to the repository.
 
 1. Click the __Environments__ vertical tab
 2. Click __New environment__ button
-3. Refer to the __Figure 2__ table for field values
+3. Refer to the __Figure 4__ table for field values
 4. Click __Configure environment__ button
 6. Repeat steps 2 to 4 for each row
 
 
-###### Figure 2
+###### Figure 4
 
 | Name        |
 | ----------- |
@@ -156,11 +165,11 @@ file to the repository.
 1. Click the __Environments__ vertical tab
 2. Click the environment name
 3. Under Environment secrets section, click __Add secret__ button
-4. Refer to the __Figure 3__ table for field values
+4. Refer to the __Figure 5__ table for field values
 5. Repeat steps 2 to 4 for each row
 
 
-###### Figure 3
+###### Figure 5
 
 | Name              | Value                                 |
 | ----------------- | ------------------------------------- |
@@ -188,6 +197,7 @@ directory.
 ## Snippets
 
 ### Create Scratch Org
+
 ```
 sfdx force:org:create --wait 30 --durationdays 30 --setdefaultusername \
 --definitionfile config/project-scratch-def.json \
