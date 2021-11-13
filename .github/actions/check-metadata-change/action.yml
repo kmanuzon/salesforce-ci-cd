@@ -20,7 +20,7 @@ runs:
     - shell: bash
       run: |
         echo
-        echo === CHANGED FILES ONLY NO DELETED FILES
+        echo === SHOWING CHANGED FILES ONLY NO DELETED FILES
         git --no-pager diff --diff-filter=ACMRTUXB --name-only ${{ inputs.destination-branch }} ${{ inputs.source-branch }}
         echo
 
