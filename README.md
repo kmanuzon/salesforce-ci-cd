@@ -28,11 +28,11 @@ This repository is a proof of concept for Salesforce CI/CD with GitHub Actions.
 
 The following sections will walkthrough step by step of setting up CI/CD.
 
-- [Generate server certificates and keys](#-generate-server-certificates-and-keys)
-- [Create Connected App in Salesforce](#-create-connected-app-in-salesforce)
-- [Encrypt server keys and commit to repository](#-encrypt-server-keys-and-commit-to-repository)
-- [Setup Environments and Secrets in GitHub](#-setup-environments-and-secrets-in-github)
-- [Create GitHub Actions](#-create-github-actions)
+- [Generate server certificates and keys](#generate-server-certificates-and-keys)
+- [Create Connected App in Salesforce](#create-connected-app-in-salesforce)
+- [Encrypt server keys and commit to repository](#encrypt-server-keys-and-commit-to-repository)
+- [Setup Environments and Secrets in GitHub](#setup-environments-and-secrets-in-github)
+- [Create GitHub Actions](#create-github-actions)
 
 
 ## Generate server certificates and keys
