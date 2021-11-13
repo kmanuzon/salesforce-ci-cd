@@ -7,19 +7,22 @@ different environments and branches.
 ## Statuses
 
 
-##### Validate Builds
+##### Partial SBX Builds
+
+[![Ad hoc Partial SBX](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/ad-hoc-partial-sbx.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/ad-hoc-partial-sbx.yml)
 
 [![Partial SBX Validate PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-validate-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-validate-pr.yml)
 
-[![Production Pull Request Validation](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-pull-request-validation.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-pull-request-validation.yml)
-
-##### Deploy Builds
-
-[![Partial SBX Deploy Manual](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-manual.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-manual.yml)
-
 [![Partial SBX Deploy PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-pr.yml)
 
-[![Production Deployment](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deployment.yml)
+
+##### Production Builds
+
+[![Ad hoc Production](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/ad-hoc-production.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/ad-hoc-production.yml)
+
+[![Production Validate PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-validate-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-validate-pr.yml)
+
+[![Production Deploy PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deploy-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/production-deploy-pr.yml)
 
 
 ## Overview
