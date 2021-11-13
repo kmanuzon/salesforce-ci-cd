@@ -5,6 +5,7 @@ public with sharing class SampleClass
 	 * more comment
 	 * hotfix
 	 * hotfix 2
+	 * hotfix/test-3
 	 */
 	public static void doSomething()
 	{
