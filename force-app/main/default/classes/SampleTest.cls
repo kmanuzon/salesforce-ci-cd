@@ -13,4 +13,15 @@ private class SampleTest
 		// then
 		System.assertEquals(false, records.isEmpty());
 	}
+
+	@IsTest
+	static void itShouldDoSomethi()
+	{
+		// given
+
+		// when
+		SampleClass.doSomething();
+
+		// then
+	}
 }
