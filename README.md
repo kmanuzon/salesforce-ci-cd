@@ -33,6 +33,8 @@ The following sections will walkthrough step by step of setting up CI/CD.
 - [Create Connected App in Salesforce](#create-connected-app-in-salesforce)
 - [Setup Environments and Secrets in GitHub](#setup-environments-and-secrets-in-github)
 - [Create GitHub Actions](#create-github-actions)
+- [Setup protected branches](#setup-protected-branches)
+- [Setup environment branches for security](#setup-environment-branches-for-security)
 - [Resources](#resources)
 
 
@@ -156,7 +158,9 @@ repository.
 
 | Name        |
 | ----------- |
+| DEV_SBX     |
 | PARTIAL_SBX |
+| FULL_SBX    |
 | PRODUCTION  |
 
 
@@ -164,12 +168,12 @@ repository.
 
 1. Click the __Environments__ vertical tab
 2. Click the environment name link
-3. Under Environment secrets section, click __Add secret__ button
-4. Refer to the __Figure 5__ table for field values
+3. Under __Environment secrets section__, click __Add secret__ button
+4. Refer to the __Figure 5.1__ or __Figure 5.2__ table for field values
 5. Repeat steps 3 to 4 for each row
 
 
-###### Figure 5
+###### Figure 5.1
 
 | Name              | Value                                 |
 | ----------------- | ------------------------------------- |
@@ -177,11 +181,114 @@ repository.
 | SFDC_USERNAME     | Salesforce Username                   |
 
 
+###### Figure 5.2 For PRODUCTION environment only
+
+| Name              | Value                                 |
+| ----------------- | ------------------------------------- |
+| SFDC_CONSUMER_KEY | Salesforce Connected App Consumer Key |
+| SFDC_USERNAME     | Salesforce Username                   |
+| SFDC_INSTANCE_URL | https://login.salesforce.com          |
+
+
 ## Create GitHub Actions
 
 This repository already includes actions and workflows, see `./github/`
 directory. Alternatively, see the [Using environments for deployment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment)
 documentation.
+
+
+## Setup protected branches
+
+This section should be used as a template for configuring branch rules.
+
+1. Click __Settings__ tab
+2. Click __Branches__ vertical tab
+3. Click __Add rule__ button
+4. Refer to the __Figure 6.x__ table for field values
+5. Click __Create__ button
+
+
+###### Figure 6.1
+
+| Field Name                                                       | Value                |
+| ---------------------------------------------------------------- | -------------------- |
+| Branch name pattern                                              | develop              |
+| Require a pull request before merging                            | Checked              |
+| Require approvals                                                | Checked              |
+| Required number of approvals before merging:                     | 2                    |
+| Dismiss stale pull request approvals when new commits are pushed | Checked              |
+| Require status checks to pass before merging                     | Checked              |
+| Require branches to be up to date before merging                 | Checked              |
+| Status check (input field)                                       | partial-sbx-validate |
+| Include administrators                                           | Checked              |
+
+
+###### Figure 6.2
+
+| Field Name                                                       | Value                   |
+| ---------------------------------------------------------------- | ----------------------- |
+| Branch name pattern                                              | release                 |
+| Require a pull request before merging                            | Checked                 |
+| Require approvals                                                | Checked                 |
+| Required number of approvals before merging:                     | 2                       |
+| Dismiss stale pull request approvals when new commits are pushed | Checked                 |
+| Require status checks to pass before merging                     | Checked                 |
+| Require branches to be up to date before merging                 | Checked                 |
+| Status check (input field)                                       | full-sbx-validate       |
+| Include administrators                                           | Checked                 |
+
+
+###### Figure 6.3
+
+| Field Name                                                       | Value                   |
+| ---------------------------------------------------------------- | ----------------------- |
+| Branch name pattern                                              | master                  |
+| Require a pull request before merging                            | Checked                 |
+| Require approvals                                                | Checked                 |
+| Required number of approvals before merging:                     | 2                       |
+| Dismiss stale pull request approvals when new commits are pushed | Checked                 |
+| Require status checks to pass before merging                     | Checked                 |
+| Require branches to be up to date before merging                 | Checked                 |
+| Status check (input field)                                       | production-sbx-validate |
+| Include administrators                                           | Checked                 |
+
+
+## Setup environment branches for security
+
+1. Click __Settings__ tab
+2. Click the __Environments__ vertical tab
+3. Click the environment name link
+4. Under __Deployment branches section__, change the dropdown option and choose __Selected branches__
+5. Click __Add deployment branch rule__ link
+6. Refer to the __Figure 7.x__ table for field values
+
+
+###### Figure 7.1 For PARTIAL_SBX environment only
+
+| Branch name pattern: |
+| -------------------- |
+| develop              |
+| feature/*            |
+| hotfix/*             |
+
+
+###### Figure 7.2 For FULL_SBX environment only
+
+| Branch name pattern: |
+| -------------------- |
+| release              |
+| hotfix/*             |
+
+
+###### Figure 7.3 For PRODUCTION environment only
+
+| Branch name pattern: |
+| -------------------- |
+| master               |
+| hotfix/*             |
+
+> __NOTE__ According to GitHub docs, patterns used here are based on
+[fnmatch](https://ruby-doc.org/core-2.5.1/File.html#method-c-fnmatch).
 
 
 ## Resources
