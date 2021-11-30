@@ -25,4 +25,4 @@ runs:
     - id: main
       shell: bash
       run: |
-        echo "::set-output name=value::$( git --no-pager log --since='${{ inputs.since }}' --format='%H' )"
+        echo "::set-output name=value::$( git --no-pager log --since='${{ inputs.since }}' --format='%H' | tail -1 )"
