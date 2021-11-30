@@ -1,0 +1,28 @@
+name: 'Get Oldest Commit Hash'
+description: 'Returns the oldest commit hash based on a relative date.'
+
+inputs:
+  since:
+    description: 'The value of --since option e.g. "1 days ago".'
+    required: true
+
+outputs:
+  commit-hash:
+    description: 'Oldest Commit Hash'
+    value: ${{ steps.main.outputs.value }}
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        echo
+        echo === COMMITS
+        git --no-pager log --since='${{ inputs.since }}' --format='%Cred%H%Creset  %Cgreen%ar%Creset %Cblue%an%Creset %s'
+        echo
+        echo
+
+    - id: main
+      shell: bash
+      run: |
+        echo "::set-output name=value::$( git --no-pager log --since='${{ inputs.since }}' --format='%H' )"
