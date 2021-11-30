@@ -20,7 +20,7 @@ jobs:
         id: oldest-commit-hash
         uses: ./.github/actions/get-oldest-commit-hash
         with:
-          since: '100 days ago'
+          since: '1 days ago'
 
       - name: 'Check for Metadata Change'
         id: check-metadata-change
