@@ -25,4 +25,8 @@ runs:
     - id: main
       shell: bash
       run: |
-        echo "::set-output name=value::$( git --no-pager log --since='${{ inputs.since }}' --format='%H' | tail -1 )"
+        if [ -n "$( git --no-pager log --since='${{ inputs.since }}' --format='%H' | tail -1 )" ]; then
+          echo "::set-output name=value::$( git --no-pager log --since='${{ inputs.since }}' --format='%H' | tail -1 )"
+        else
+          echo "::set-output name=value::HEAD"
+        fi
