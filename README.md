@@ -14,6 +14,8 @@ This repository is a proof of concept for Salesforce CI/CD with GitHub Actions.
 
 [![Partial SBX Deploy PR](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-pr.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-pr.yml)
 
+[![Partial SBX Deploy Nightly](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-nightly.yml/badge.svg)](https://github.com/kmanuzon/salesforce-ci-cd/actions/workflows/partial-sbx-deploy-nightly.yml)
+
 
 ##### Production Builds
 

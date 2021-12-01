@@ -4,7 +4,8 @@ concurrency: 'partial-sbx'
 on:
   #workflow_dispatch:
   schedule:
-    - cron: '29 19 * * *'
+    # github actions is UTC timezone
+    - cron: '33 12 * * *'
   #  - cron: 0 0 * * *'
 
 jobs:
