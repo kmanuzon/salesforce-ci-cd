@@ -2,8 +2,9 @@ name: Partial SBX Deploy Nightly
 concurrency: 'partial-sbx'
 
 on:
-  workflow_dispatch:
-  #schedule:
+  #workflow_dispatch:
+  schedule:
+    - cron: 28 19 * * *'
   #  - cron: 0 0 * * *'
 
 jobs:
@@ -20,7 +21,7 @@ jobs:
         id: oldest-commit-hash
         uses: ./.github/actions/get-oldest-commit-hash
         with:
-          since: '1 minutes ago'
+          since: '1 days ago'
 
       - name: 'Check for Metadata Change'
         id: check-metadata-change
