@@ -2,11 +2,9 @@ name: Partial SBX Deploy Nightly
 concurrency: 'partial-sbx'
 
 on:
-  #workflow_dispatch:
   schedule:
     # github actions is UTC timezone
-    - cron: '33 12 * * *'
-  #  - cron: 0 0 * * *'
+    - cron: '0 4 * * *'
 
 jobs:
   partial-sbx-deploy-nightly-build:
