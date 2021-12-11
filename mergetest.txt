@@ -10,3 +10,5 @@ should conflict here
 another change
 
 foo change
+
+one commit test
