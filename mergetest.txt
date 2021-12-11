@@ -7,3 +7,6 @@ this is one change
 this is two change
 
 should conflict here
+another change
+
+foo change
