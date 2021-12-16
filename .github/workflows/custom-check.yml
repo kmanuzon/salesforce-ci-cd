@@ -3,31 +3,43 @@ name: Custom Check
 on:
   workflow_dispatch:
     inputs:
-      commit-hash:
+      branch:
         description: 'Commit hash from branch'
         required: true
-        default: 'HEAD^'
-      test-only:
-        description: 'Test only?'
-        required: true
-        default: 'Yes'
+        default: 'custom-check'
 
 jobs:
   custom-check-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Clone Repository
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{ github.event.inputs.branch }}
 
-      - name: GitHub API Request
+      - name: Get Latest Commit Hash
+        id: latest-commit-hash
+        run: echo "::set-output name=commit-hash::$( git log -1 --format='%H' )"
+
+      - name: Create Check Run
         uses: octokit/request-action@v2.1.0
-        id: get_latest_release
+        id: create-check-run
         with:
-          route: GET /repos/kmanuzon/salesforce-ci-cd/commits/develop/check-runs
-          repo: salesforce-ci-cd
+          route: POST /repos/${{ github.repository }}/check-runs
+          name: ${{ github.workflow }}
+          head_sha: ${{ steps.latest-commit-hash.outputs.commit-hash }}
+          details_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          status: in_progress
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 'FOO'
-        run: "echo latest release: ${{ steps.get_latest_release.outputs.data }}"
+      - name: Update Check Run
+        uses: octokit/request-action@v2.x
+        with:
+          route: PATCH /repos/${{ github.repository }}/check-runs/${{ fromJson(steps.create-check-run.outputs.data).id }}
+          check_run_id: ${{ fromJson(steps.create-check-run.outputs.data).id }}
+          status: completed
+          conclusion: success
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
