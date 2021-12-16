@@ -33,6 +33,7 @@ jobs:
           name: ${{ github.workflow }}
           head_sha: ${{ steps.latest-commit-hash.outputs.commit-hash }}
           status: in_progress
+          details_url: "https://google.com"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -77,5 +78,6 @@ jobs:
           check_run_id: ${{ fromJson(needs.create-check-run.outputs.data).id }}
           status: completed
           conclusion: cancelled
+          details_url: "https://bing.com"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
