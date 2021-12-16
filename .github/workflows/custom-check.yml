@@ -29,6 +29,7 @@ jobs:
           route: POST /repos/${{ github.repository }}/check-runs
           name: ${{ github.workflow }}
           head_sha: ${{ steps.latest-commit-hash.outputs.commit-hash }}
+          details_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           status: in_progress
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
