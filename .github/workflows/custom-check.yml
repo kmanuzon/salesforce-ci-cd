@@ -65,7 +65,7 @@ jobs:
           conclusion: success
           output: |
             title: Success
-            summary: The validation build was successful.
+            summary: The validation build was successful. See the [build summary](/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -83,7 +83,7 @@ jobs:
           conclusion: failure
           output: |
             title: Failure
-            summary: The validation build has failed.
+            summary: The validation build has failed. See the [build summary](/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -101,6 +101,6 @@ jobs:
           conclusion: cancelled
           output: |
             title: Cancelled
-            summary: The validation build has been cancelled.
+            summary: The validation build has been cancelled. See the [build summary](/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
