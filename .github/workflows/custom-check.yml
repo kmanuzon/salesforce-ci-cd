@@ -28,7 +28,7 @@ jobs:
           route: POST /repos/${{ github.repository }}/check-runs
           repo: salesforce-ci-cd
           name: "Test check run"
-          head_sha: ${{ github.commit-hash.outputs.value }}
+          head_sha: ${{ steps.commit-hash.outputs.value }}
           output: |
             title: Test check run title
             summary: A summary of the test check run
