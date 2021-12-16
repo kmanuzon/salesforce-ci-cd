@@ -17,14 +17,18 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.inputs.branch }}
 
+      - name: Get Most Recent Commit Hash
+        id: commit-hash
+        run: echo "::set-output name=value::$( git log -1 --format='%H' )"
+
       - name: GitHub API Request
         uses: octokit/request-action@v2.1.0
         id: create_check_run
         with:
-          route: POST /repos/kmanuzon/salesforce-ci-cd/check-runs
+          route: POST /repos/${{ github.repository }}/check-runs
           repo: salesforce-ci-cd
           name: "Test check run"
-          head_sha: ${{ github.sha }}
+          head_sha: ${{ github.commit-hash.outputs.value }}
           output: |
             title: Test check run title
             summary: A summary of the test check run
@@ -37,7 +41,7 @@ jobs:
       - uses: octokit/request-action@v2.x
         id: update_check_run
         with:
-          route: PATCH /repos/kmanuzon/salesforce-ci-cd/check-runs/${{ fromJson(steps.create_check_run.outputs.data).id }}
+          route: PATCH /repos/${{ github.repository }}/check-runs/${{ fromJson(steps.create_check_run.outputs.data).id }}
           repo: salesforce-ci-cd
           check_run_id: ${{ fromJson(steps.create_check_run.outputs.data).id }}
           conclusion: "success"
