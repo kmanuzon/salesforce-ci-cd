@@ -33,6 +33,7 @@ jobs:
           name: ${{ github.workflow }}
           head_sha: ${{ steps.latest-commit-hash.outputs.commit-hash }}
           status: in_progress
+          details_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
