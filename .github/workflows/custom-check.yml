@@ -56,6 +56,9 @@ jobs:
           check_run_id: ${{ fromJson(needs.create-check-run.outputs.data).id }}
           status: completed
           conclusion: success
+          output: |
+            title: Success
+            summary: The validation build was successful.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -67,6 +70,9 @@ jobs:
           check_run_id: ${{ fromJson(needs.create-check-run.outputs.data).id }}
           status: completed
           conclusion: failure
+          output: |
+            title: Failure
+            summary: The validation build has failed.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -79,5 +85,8 @@ jobs:
           status: completed
           conclusion: cancelled
           details_url: "https://bing.com"
+          output: |
+            title: Cancelled
+            summary: The validation build has been cancelled.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
