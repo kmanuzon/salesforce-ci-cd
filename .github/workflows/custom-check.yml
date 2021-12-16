@@ -12,39 +12,33 @@ jobs:
   custom-check-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Clone Repository
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.branch }}
 
-      - name: Get Most Recent Commit Hash
-        id: commit-hash
-        run: echo "::set-output name=value::$( git log -1 --format='%H' )"
+      - name: Get Latest Commit Hash
+        id: latest-commit-hash
+        run: echo "::set-output name=commit-hash::$( git log -1 --format='%H' )"
 
-      - name: GitHub API Request
+      - name: Create Check Run
         uses: octokit/request-action@v2.1.0
-        id: create_check_run
+        id: create-check-run
         with:
           route: POST /repos/${{ github.repository }}/check-runs
-          repo: salesforce-ci-cd
-          name: "Test check run"
-          head_sha: ${{ steps.commit-hash.outputs.value }}
-          output: |
-            title: Test check run title
-            summary: A summary of the test check run
-            images:
-              - alt: Test image
-                image_url: https://octodex.github.com/images/jetpacktocat.png
+          name: ${{ github.workflow }}
+          head_sha: ${{ steps.latest-commit-hash.outputs.commit-hash }}
+          status: in_progress
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: octokit/request-action@v2.x
-        id: update_check_run
+      - name: Update Check Run
+        uses: octokit/request-action@v2.x
         with:
-          route: PATCH /repos/${{ github.repository }}/check-runs/${{ fromJson(steps.create_check_run.outputs.data).id }}
-          repo: salesforce-ci-cd
-          check_run_id: ${{ fromJson(steps.create_check_run.outputs.data).id }}
-          conclusion: "success"
-          status: "completed"
+          route: PATCH /repos/${{ github.repository }}/check-runs/${{ fromJson(steps.create-check-run.outputs.data).id }}
+          check_run_id: ${{ fromJson(steps.create-check-run.outputs.data).id }}
+          status: completed
+          conclusion: success
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
