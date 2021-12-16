@@ -33,7 +33,6 @@ jobs:
           name: ${{ github.workflow }}
           head_sha: ${{ steps.latest-commit-hash.outputs.commit-hash }}
           status: in_progress
-          details_url: "https://google.com"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -50,13 +49,12 @@ jobs:
 
 #git --no-pager diff --diff-filter=ACMRTUXB remotes/origin/develop HEAD
 
-  update-check-run:
-    if: always()
+  update-success-check-run:
+    if: success()
     needs: [create-check-run, validate-build]
     runs-on: ubuntu-latest
     steps:
       - name: Update Check Run as Success
-        if: success()
         uses: octokit/request-action@v2.x
         with:
           route: PATCH /repos/${{ github.repository }}/check-runs/${{ fromJson(needs.create-check-run.outputs.data).id }}
@@ -69,8 +67,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  update-failure-check-run:
+    if: failure()
+    needs: [create-check-run, validate-build]
+    runs-on: ubuntu-latest
+    steps:
       - name: Update Check Run as Failure
-        if: failure()
         uses: octokit/request-action@v2.x
         with:
           route: PATCH /repos/${{ github.repository }}/check-runs/${{ fromJson(needs.create-check-run.outputs.data).id }}
@@ -83,15 +85,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  update-cancelled-check-run:
+    if: cancelled()
+    needs: [create-check-run, validate-build]
+    runs-on: ubuntu-latest
+    steps:
       - name: Update Check Run as Cancelled
-        if: cancelled()
         uses: octokit/request-action@v2.x
         with:
           route: PATCH /repos/${{ github.repository }}/check-runs/${{ fromJson(needs.create-check-run.outputs.data).id }}
           check_run_id: ${{ fromJson(needs.create-check-run.outputs.data).id }}
           status: completed
           conclusion: cancelled
-          details_url: "https://bing.com"
           output: |
             title: Cancelled
             summary: The validation build has been cancelled.
