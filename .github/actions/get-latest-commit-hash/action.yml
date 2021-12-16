@@ -1,0 +1,22 @@
+name: 'Get Latest Commit Hash'
+description: 'Returns the latest commit hash in the current branch.'
+
+outputs:
+  commit-hash:
+    description: 'Latest Commit Hash'
+    value: ${{ steps.main.outputs.value }}
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        echo
+        echo === LATEST COMMIT HASH
+        git log -1 --format='%H'
+        echo
+        echo
+
+    - id: main
+      shell: bash
+      run: echo "::set-output name=commit-hash::$( git log -1 --format='%H' )"
