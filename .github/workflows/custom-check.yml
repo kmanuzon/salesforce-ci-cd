@@ -10,6 +10,7 @@ on:
 
 jobs:
   create-check-run:
+    if: always()
     runs-on: ubuntu-latest
     outputs:
       data: ${{ steps.create-check-run.outputs.data }}
