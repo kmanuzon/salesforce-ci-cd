@@ -1,0 +1,33 @@
+name: Custom Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit-hash:
+        description: 'Commit hash from branch'
+        required: true
+        default: 'HEAD^'
+      test-only:
+        description: 'Test only?'
+        required: true
+        default: 'Yes'
+
+jobs:
+  custom-check-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: GitHub API Request
+        uses: octokit/request-action@v2.1.0
+        id: get_latest_release
+        with:
+          route: GET /repos/kmanuzon/salesforce-ci-cd/commits/develop/check-runs
+          repo: salesforce-ci-cd
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'FOO'
+        run: "echo latest release: ${{ steps.get_latest_release.outputs.data }}"
