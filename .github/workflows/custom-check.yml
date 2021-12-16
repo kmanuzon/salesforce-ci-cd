@@ -42,6 +42,13 @@ jobs:
     steps:
       - name: Whats up
         run: echo "Hello World!"
+      - name: Try to fail
+        run: exit 1
+      - name: Print if not fail
+        run: echo should not get here
+
+
+#git --no-pager diff --diff-filter=ACMRTUXB remotes/origin/develop HEAD
 
   update-check-run:
     if: always()
