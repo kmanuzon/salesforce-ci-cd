@@ -18,7 +18,7 @@ jobs:
       #  uses: ./.github/actions/build-info
 
       - name: DUMP
-        run: echo ${{ fromJson(github) }}
+        run: echo ${{ toJSON(github) }}
 
       - name: Get Pull Requests
         uses: octokit/request-action@v2.1.0
