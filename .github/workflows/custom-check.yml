@@ -9,6 +9,28 @@ on:
         default: 'custom-check'
 
 jobs:
+  create-pr-link-annotation:
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Pull Requests
+        uses: octokit/request-action@v2.1.0
+        id: get-pull-requests
+        with:
+          accept: application/vnd.github.v3+json
+          state: open
+          head: kmanuzon:${{ github.event.inputs.branch }}
+          base: develop
+          sort: created
+          direction: desc
+          per_page: 100
+          page: 1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Annotation
+        run: |
+          echo "::notice title=Build Info::Branch ${{ github.event.inputs.branch }} PR #${{ fromJson(steps.get-pull-requests.outputs.data)[0].number }} Link ${{ fromJson(steps.get-pull-requests.outputs.data)[0].html_url }}"
+
   create-check-run:
     if: always()
     runs-on: ubuntu-latest
