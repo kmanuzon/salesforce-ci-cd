@@ -34,7 +34,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Parse Response
         run: |
-          echo "${{ steps.get-pull-requests.outputs.data }}" | jq -c '.[]'
+          echo '${{ steps.get-pull-requests.outputs.data }}' | jq -c '.[]'
       - name: Create Annotation
         run: |
           echo "::notice title=Build Info - Validating Branch::${{ github.event.inputs.branch }}"
