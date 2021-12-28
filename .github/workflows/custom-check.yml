@@ -14,14 +14,8 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Clone Repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.inputs.branch }}
-
-      - name: Generate Annotations
-        uses: ./.github/actions/build-info
+      #- name: Generate Annotations
+      #  uses: ./.github/actions/build-info
 
       - name: Get Pull Requests
         uses: octokit/request-action@v2.1.0
@@ -38,6 +32,9 @@ jobs:
           page: 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Parse Response
+        run: |
+          echo "${{ steps.get-pull-requests.outputs.data }}" | jq -c '.[]'
       - name: Create Annotation
         run: |
           echo "::notice title=Build Info - Validating Branch::${{ github.event.inputs.branch }}"
