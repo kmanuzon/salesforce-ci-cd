@@ -14,6 +14,12 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: Clone Repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.branch }}
+
       - name: Generate Annotations
         uses: ./.github/actions/build-info
 
