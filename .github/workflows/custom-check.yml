@@ -17,18 +17,6 @@ jobs:
       #- name: Generate Annotations
       #  uses: ./.github/actions/build-info
 
-      - name: DUMP
-        run: |
-          echo ${{ github.action }}
-          echo ${{ github.action_path }}
-          echo ${{ github.event }}
-          echo ${{ github.event_name }}
-          echo ${{ github.event_path }}
-          echo ${{ github.run_id }}
-          echo ${{ github.run_number }}
-          echo ${{ github.workflow }}
-          echo ${{ github.workspace }}
-
       - name: Get Pull Requests
         uses: octokit/request-action@v2.1.0
         id: get-pull-requests
@@ -47,17 +35,14 @@ jobs:
 
       - name: Parse Response
         id: parse-response
-        run: echo "::set-output name=value::$( echo '${{ steps.get-pull-requests.outputs.data }}' | jq -c '.[]? | [ ''"PR ''", .number, ''" ''", .html_url ] | join(''"''")' )"
+        run: echo "::set-output name=value::$( echo '${{ steps.get-pull-requests.outputs.data }}' | jq '.[]? | [ ''"PR ''#''", .number, ''" ''", .html_url ] | join(''"''")' )"
 
       - name: Create Annotation
         run: |
-          echo ${{ steps.parse-response.outputs.value }}
           echo "::notice title=Build Info - Workflow::${{ github.server_url }}/${{ github.repository }}/actions/workflows/custom-check.yml"
           echo "::notice title=Build Info - Validating Branch::${{ github.event.inputs.branch }}"
-          echo "::notice title=Build Info - Pull Request::PR #${{ fromJson(steps.get-pull-requests.outputs.data)[0].number }} ${{ fromJson(steps.get-pull-requests.outputs.data)[0].html_url }}"
-          echo '${{ steps.get-pull-requests.outputs.data }}' | jq -c '.[]? | [ "PR #", .number, " ", .html_url ] | join("")'
           for row in '${{ steps.parse-response.outputs.value }}'; do
-            echo "::notice title=Build Info - Pull Request xx::${row}"
+            echo "::notice title=Build Info - Pull Request xx::$( echo ${row} )"
           done
 
   create-check-run:
