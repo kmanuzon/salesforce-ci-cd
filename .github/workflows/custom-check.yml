@@ -36,7 +36,7 @@ jobs:
         run: |
           echo '${{ steps.get-pull-requests.outputs.data }}' | jq -c '.[]? | [ "PR #", .number, " ", .html_url ] | join("")'
           for row in '${{ steps.get-pull-requests.outputs.data }}' | jq -c '.[]? | [ "PR #", .number, " ", .html_url ] | join("")'; do
-            echo "::notice title=Build Info - Pull Request xx::${row}"
+            echo '::notice title=Build Info - Pull Request xx::${row}'
           done
 
 
