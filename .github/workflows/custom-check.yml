@@ -9,7 +9,7 @@ on:
         default: 'custom-check'
 
 jobs:
-  create-pr-link-annotation:
+  pr-link-annotation:
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -17,8 +17,10 @@ jobs:
         uses: octokit/request-action@v2.1.0
         id: get-pull-requests
         with:
+          route: GET /repos/${{ github.repository }}/pulls
           accept: application/vnd.github.v3+json
           state: open
+          # how to get orgname in here?
           head: kmanuzon:${{ github.event.inputs.branch }}
           base: develop
           sort: created
