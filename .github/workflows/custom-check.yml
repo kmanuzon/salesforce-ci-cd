@@ -18,7 +18,7 @@ jobs:
       #  uses: ./.github/actions/build-info
 
       - name: DUMP
-        run: echo ${{ github }}
+        run: echo ${{ fromJson(github) }}
 
       - name: Get Pull Requests
         uses: octokit/request-action@v2.1.0
@@ -42,12 +42,13 @@ jobs:
 
       - name: Create Annotation
         run: |
+          echo ${{ steps.parse-response.outputs.value }}
           echo "::notice title=Build Info - Workflow::${{ github.server_url }}/${{ github.repository }}/actions/workflows/custom-check.yml"
           echo "::notice title=Build Info - Validating Branch::${{ github.event.inputs.branch }}"
           echo "::notice title=Build Info - Pull Request::PR #${{ fromJson(steps.get-pull-requests.outputs.data)[0].number }} ${{ fromJson(steps.get-pull-requests.outputs.data)[0].html_url }}"
           echo '${{ steps.get-pull-requests.outputs.data }}' | jq -c '.[]? | [ "PR #", .number, " ", .html_url ] | join("")'
           for row in '${{ steps.parse-response.outputs.value }}'; do
-            echo '::notice title=Build Info - Pull Request xx::${row}'
+            echo "::notice title=Build Info - Pull Request xx::${row}"
           done
 
   create-check-run:
