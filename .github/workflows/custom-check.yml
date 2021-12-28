@@ -10,9 +10,13 @@ on:
 
 jobs:
   build-info:
+    name: Build Info
     if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: Generate Annotations
+        uses: ./.github/actions/build-info
+
       - name: Get Pull Requests
         uses: octokit/request-action@v2.1.0
         id: get-pull-requests

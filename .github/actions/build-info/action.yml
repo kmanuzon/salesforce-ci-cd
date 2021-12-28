@@ -1,0 +1,5 @@
+name: Build Info
+description: Create annotations about the current workflow/build.
+runs:
+  using: node12
+  main: index.js
