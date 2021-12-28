@@ -1,5 +1,35 @@
 name: Build Info
 description: Create annotations about the current workflow/build.
+
 runs:
-  using: node12
-  main: index.js
+  using: "composite"
+  steps:
+    - name: Get Pull Requests
+      uses: octokit/request-action@v2.1.0
+      id: get-pull-requests
+      with:
+        route: GET /repos/${{ github.repository }}/pulls
+        accept: application/vnd.github.v3+json
+        state: open
+        head: ${{ github.repository_owner }}:${{ github.event.inputs.branch }}
+        base: develop
+        sort: created
+        direction: desc
+        per_page: 100
+        page: 1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Parse Response
+      id: parse-response
+      shell: bash
+      run: echo "::set-output name=value::$( echo '${{ steps.get-pull-requests.outputs.data }}' | jq '.[]? | [ ''"PR ''#''", .number, ''" ''", .html_url ] | join(''"''")' )"
+
+    - name: Create Annotation
+      shell: bash
+      run: |
+        echo "::notice title=Build Info - Workflow::${{ github.server_url }}/${{ github.repository }}/actions/workflows/custom-check.yml"
+        echo "::notice title=Build Info - Validating Branch::${{ github.event.inputs.branch }}"
+        for row in '${{ steps.parse-response.outputs.value }}'; do
+          echo "::notice title=Build Info - Pull Request::$( echo ${row} | tr -d '"' )"
+        done
