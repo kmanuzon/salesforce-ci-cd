@@ -9,7 +9,7 @@ on:
         default: 'custom-check'
 
 jobs:
-  pr-link-annotation:
+  build-info:
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -20,8 +20,7 @@ jobs:
           route: GET /repos/${{ github.repository }}/pulls
           accept: application/vnd.github.v3+json
           state: open
-          # how to get orgname in here?
-          head: kmanuzon:${{ github.event.inputs.branch }}
+          head: ${{ github.repository_owner }}:${{ github.event.inputs.branch }}
           base: develop
           sort: created
           direction: desc
@@ -31,7 +30,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Annotation
         run: |
-          echo "::notice title=Build Info::Branch ${{ github.event.inputs.branch }} PR #${{ fromJson(steps.get-pull-requests.outputs.data)[0].number }} Link ${{ fromJson(steps.get-pull-requests.outputs.data)[0].html_url }}"
+          echo "::notice title=Build Info::Branch ${{ github.event.inputs.branch }}\nPR #${{ fromJson(steps.get-pull-requests.outputs.data)[0].number }} Link ${{ fromJson(steps.get-pull-requests.outputs.data)[0].html_url }}"
 
   create-check-run:
     if: always()
