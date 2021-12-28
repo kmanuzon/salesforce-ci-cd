@@ -42,7 +42,7 @@ jobs:
           echo "::notice title=Build Info - Workflow::${{ github.server_url }}/${{ github.repository }}/actions/workflows/custom-check.yml"
           echo "::notice title=Build Info - Validating Branch::${{ github.event.inputs.branch }}"
           for row in '${{ steps.parse-response.outputs.value }}'; do
-            echo "::notice title=Build Info - Pull Request xx::$( echo ${row} )"
+            echo "::notice title=Build Info - Pull Request::$( echo ${row} | tr -d '"' )"
           done
 
   create-check-run:
