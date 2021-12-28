@@ -30,9 +30,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Annotation
         run: |
-          echo "::notice title=Build Info - Branch::Branch ${{ github.event.inputs.branch }}"
-          echo "::notice title=Build Info - Pull Request::PR #[${{ fromJson(steps.get-pull-requests.outputs.data)[0].number }}](${{ fromJson(steps.get-pull-requests.outputs.data)[0].html_url }})"
-          echo "::notice title=Build Info::Branch ${{ github.event.inputs.branch }} PR #${{ fromJson(steps.get-pull-requests.outputs.data)[0].number }} Link ${{ fromJson(steps.get-pull-requests.outputs.data)[0].html_url }}"
+          echo "::notice title=Build Info - Validating Branch::${{ github.event.inputs.branch }}"
+          echo "::notice title=Build Info - Pull Request::PR #${{ fromJson(steps.get-pull-requests.outputs.data)[0].number }} ${{ fromJson(steps.get-pull-requests.outputs.data)[0].html_url }}"
 
   create-check-run:
     if: always()
